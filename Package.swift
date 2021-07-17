@@ -2,17 +2,17 @@
 import PackageDescription
 
 let package = Package(
-    name: "Sentry",
+    name: "SentryCocoa",
     platforms: [.iOS(.v9), .macOS(.v10_10), .tvOS(.v9), .watchOS(.v2)],
     products: [
         .library(
-            name: "Sentry",
-            targets: ["Sentry"]
+            name: "SentryCocoa",
+            targets: ["SentryCocoa"]
         )
     ],
     targets: [
         .target(
-            name: "Sentry",
+            name: "SentryCocoa",
             path: "Sources",
             sources: [
                 "Sentry/",
