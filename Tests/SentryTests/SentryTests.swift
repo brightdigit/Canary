@@ -1,6 +1,6 @@
 import XCTest
 import Foundation
-@testable import Sentry
+@testable import SentryVanilla
 
 final class SentryTests: XCTestCase {
     func testExample() {

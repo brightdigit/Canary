@@ -25,7 +25,7 @@ public class Sentry {
         // throw PlatformNotSupported
 #endif
 
-#if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
+#if os(macOS) || os(iOS) || os(tvOS)
         options.add(integration: PLCrashReporterIntegration())
 #endif
 

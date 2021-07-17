@@ -1,4 +1,4 @@
-import Sentry
+import SentryVanilla
 import Foundation
 
 class ExampleProcessor: EventProcessor {
