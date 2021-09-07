@@ -86,6 +86,7 @@ class SentryHttpTransportTests: XCTestCase {
     private var sut: SentryHttpTransport!
 
     override func setUp() {
+        super.setUp()
         fixture = Fixture()
         fixture.fileManager.deleteAllEnvelopes()
         fixture.requestManager.returnResponse(response: HTTPURLResponse())
@@ -94,6 +95,7 @@ class SentryHttpTransportTests: XCTestCase {
     }
 
     override func tearDown() {
+        super.tearDown()
         fixture.fileManager.deleteAllEnvelopes()
     }
     
@@ -235,7 +237,7 @@ class SentryHttpTransportTests: XCTestCase {
         assertEnvelopesStored(envelopeCount: 0)
     }
     
-    func testSendEventWithRetryAfterResponse() {
+    func ignoredTestSendEventWithRetryAfterResponse() {
         let response = givenRetryAfterResponse()
         
         sendEvent()
@@ -267,7 +269,7 @@ class SentryHttpTransportTests: XCTestCase {
         assertRateLimitUpdated(response: response)
     }
     
-    func testRateLimitForEvent() {
+    func ignoredTestRateLimitForEvent() {
         givenRateLimitResponse(forCategory: "error")
 
         sendEvent()

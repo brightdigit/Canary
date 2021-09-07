@@ -72,10 +72,12 @@ class SentryEnvelopeTests: XCTestCase {
     private let fixture = Fixture()
 
     override func setUp() {
+        super.setUp()
         CurrentDate.setCurrentDateProvider(TestCurrentDateProvider())
     }
     
     override func tearDown() {
+        super.tearDown()
         do {
             let fileManager = FileManager.default
             if fileManager.fileExists(atPath: fixture.path) {
@@ -241,8 +243,8 @@ class SentryEnvelopeTests: XCTestCase {
             json.assertContains("warning", "level")
             json.assertContains(event.releaseName ?? "", "releaseName")
             json.assertContains(event.environment ?? "", "environment")
-            let eventTimestamp = CurrentDate.date() as NSDate
-            json.assertContains(eventTimestamp.sentry_toIso8601String(), "timestamp")
+            
+            json.assertContains(String(format: "%.0f", CurrentDate.date().timeIntervalSince1970), "timestamp")
         }
     }
     

@@ -53,7 +53,7 @@ class SentryAppStartTrackerTests: XCTestCase {
         super.tearDown()
         sut.stop()
         fixture.fileManager.deleteAllFolders()
-        SentrySDK.getAndResetAppStartMeasurement()
+        clearTestState()
     }
     
     func testFirstStart_IsColdStart() {
@@ -146,6 +146,44 @@ class SentryAppStartTrackerTests: XCTestCase {
         assertNoAppStartUp()
     }
     
+    /**
+     * Test for reproducing GH-1225
+     * It can happen that the OS posts the didFinishLaunching notification before we register for it.
+     */
+    func testDidFinishLaunching_PostedBeforeStart() {
+        givenProcessStartTimestamp()
+        sut = fixture.sut
+        givenRuntimeInitTimestamp(sut: sut)
+        
+        TestNotificationCenter.willEnterForeground()
+        
+        givenDidFinishLaunchingTimestamp()
+        
+        TestNotificationCenter.didFinishLaunching()
+        
+        sut.start()
+        
+        advanceTime(bySeconds: 0.1)
+        TestNotificationCenter.uiWindowDidBecomeVisible()
+        TestNotificationCenter.didBecomeActive()
+        
+        assertValidStart(type: .cold)
+    }
+    
+    func testHybridSDKs_ColdStart() {
+        hybridAppStart()
+        
+        assertValidHybridStart(type: .cold)
+    }
+    
+    func testHybridSDKs_SecondStart_SystemNotRebooted_IsWarmStart() {
+        givenSystemNotRebooted()
+        
+        hybridAppStart()
+        
+        assertValidHybridStart(type: .warm)
+    }
+    
     private func givenPreviousAppState(appState: SentryAppState) {
         fixture.fileManager.store(appState)
     }
@@ -157,23 +195,62 @@ class SentryAppStartTrackerTests: XCTestCase {
         givenPreviousAppState(appState: appState)
     }
     
-    private func startApp() {
+    private func givenProcessStartTimestamp() {
         fixture.sysctl.setProcessStartTimestamp(value: fixture.currentDate.date())
-        
-        sut = fixture.sut
+    }
+    
+    private func givenRuntimeInitTimestamp(sut: SentryAppStartTracker) {
         fixture.runtimeInitTimestamp = fixture.currentDate.date().addingTimeInterval(0.2)
         Dynamic(sut).setRuntimeInit(fixture.runtimeInitTimestamp)
+    }
+    
+    private func givenDidFinishLaunchingTimestamp() {
+        fixture.didFinishLaunchingTimestamp = fixture.currentDate.date().addingTimeInterval(0.3)
+        advanceTime(bySeconds: 0.3)
+    }
+    
+    private func startApp() {
+        givenProcessStartTimestamp()
+        
+        sut = fixture.sut
+        givenRuntimeInitTimestamp(sut: sut)
         sut.start()
         
         TestNotificationCenter.willEnterForeground()
         
-        fixture.didFinishLaunchingTimestamp = fixture.currentDate.date().addingTimeInterval(0.3)
-        advanceTime(bySeconds: 0.3)
+        givenDidFinishLaunchingTimestamp()
         
         TestNotificationCenter.didFinishLaunching()
         advanceTime(bySeconds: 0.1)
         TestNotificationCenter.uiWindowDidBecomeVisible()
         TestNotificationCenter.didBecomeActive()
+    }
+    
+    private func hybridAppStart() {
+        PrivateSentrySDKOnly.appStartMeasurementHybridSDKMode = true
+        
+        givenProcessStartTimestamp()
+        
+        advanceTime(bySeconds: 0.2)
+        fixture.runtimeInitTimestamp = fixture.currentDate.date()
+        
+        TestNotificationCenter.willEnterForeground()
+        
+        advanceTime(bySeconds: 0.3)
+        fixture.didFinishLaunchingTimestamp = fixture.currentDate.date()
+        
+        sut = fixture.sut
+        Dynamic(sut).setRuntimeInit(fixture.runtimeInitTimestamp)
+        
+        TestNotificationCenter.didFinishLaunching()
+        
+        advanceTime(bySeconds: 0.1)
+        TestNotificationCenter.uiWindowDidBecomeVisible()
+        TestNotificationCenter.didBecomeActive()
+        
+        // The Hybrid SDKs call start after all the notifications are posted,
+        // because they init the SentrySDK when the hybrid engine is ready.
+        sut.start()
     }
     
     private func goToForeground() {
@@ -196,25 +273,44 @@ class SentryAppStartTrackerTests: XCTestCase {
      * We assume a class reads the app measurement, sends it with a transaction to Sentry and sets it to nil.
      */
     private func sendAppMeasurement() {
-        SentrySDK.getAndResetAppStartMeasurement()
+        SentrySDK.setAppStartMeasurement(nil)
     }
 
     private func assertValidStart(type: SentryAppStartType) {
-        let appStartMeasurement = SentrySDK.getAndResetAppStartMeasurement()
-        XCTAssertNotNil(appStartMeasurement)
-        XCTAssertEqual(type.rawValue, appStartMeasurement?.type.rawValue)
+        guard let appStartMeasurement = SentrySDK.getAppStartMeasurement() else {
+            XCTFail("AppStartMeasurement must not be nil")
+            return
+        }
+        
+        XCTAssertEqual(type.rawValue, appStartMeasurement.type.rawValue)
 
         let expectedAppStartDuration = fixture.appStartDuration
-        let actualAppStartDuration = appStartMeasurement!.duration
+        let actualAppStartDuration = appStartMeasurement.duration
         XCTAssertEqual(expectedAppStartDuration, actualAppStartDuration, accuracy: 0.000_1)
 
-        XCTAssertEqual(fixture.sysctl.processStartTimestamp, appStartMeasurement?.appStartTimestamp)
-        XCTAssertEqual(fixture.runtimeInitTimestamp, appStartMeasurement?.runtimeInitTimestamp)
+        XCTAssertEqual(fixture.sysctl.processStartTimestamp, appStartMeasurement.appStartTimestamp)
+        XCTAssertEqual(fixture.runtimeInitTimestamp, appStartMeasurement.runtimeInitTimestamp)
+        XCTAssertEqual(fixture.didFinishLaunchingTimestamp, appStartMeasurement.didFinishLaunchingTimestamp)
+    }
+    
+    private func assertValidHybridStart(type: SentryAppStartType) {
+        guard let appStartMeasurement = SentrySDK.getAppStartMeasurement() else {
+            XCTFail("AppStartMeasurement must not be nil")
+            return
+        }
+        
+        XCTAssertEqual(type.rawValue, appStartMeasurement.type.rawValue)
 
+        let actualAppStartDuration = appStartMeasurement.duration
+        XCTAssertEqual(0.0, actualAppStartDuration, accuracy: 0.000_1)
+
+        XCTAssertEqual(fixture.sysctl.processStartTimestamp, appStartMeasurement.appStartTimestamp)
+        XCTAssertEqual(fixture.runtimeInitTimestamp, appStartMeasurement.runtimeInitTimestamp)
+        XCTAssertEqual(Date(timeIntervalSinceReferenceDate: 0), appStartMeasurement.didFinishLaunchingTimestamp)
     }
 
     private func assertNoAppStartUp() {
-        XCTAssertNil(SentrySDK.getAndResetAppStartMeasurement())
+        XCTAssertNil(SentrySDK.getAppStartMeasurement())
     }
     
     private func advanceTime(bySeconds: TimeInterval) {

@@ -20,12 +20,14 @@ class SentryAppStartTrackingIntegrationTests: XCTestCase {
     private var sut: SentryAppStartTrackingIntegration!
     
     override func setUp() {
+        super.setUp()
         fixture = Fixture()
-        SentrySDK.getAndResetAppStartMeasurement()
+        SentrySDK.setAppStartMeasurement(nil)
         sut = SentryAppStartTrackingIntegration()
     }
 
     override func tearDown() {
+        super.tearDown()
         fixture.fileManager.deleteAppState()
         sut.stop()
     }
@@ -35,7 +37,7 @@ class SentryAppStartTrackingIntegrationTests: XCTestCase {
         
         TestNotificationCenter.uiWindowDidBecomeVisible()
         
-        XCTAssertNotNil(SentrySDK.getAndResetAppStartMeasurement())
+        XCTAssertNotNil(SentrySDK.getAppStartMeasurement())
     }
     
     func testNoSampleRate_DoesNotUpdatesAppState() {
@@ -46,7 +48,7 @@ class SentryAppStartTrackingIntegrationTests: XCTestCase {
         
         TestNotificationCenter.uiWindowDidBecomeVisible()
         
-        XCTAssertNil(SentrySDK.getAndResetAppStartMeasurement())
+        XCTAssertNil(SentrySDK.getAppStartMeasurement())
     }
     
     func testOnlyAppStartMeasuringEnabled_DoesNotUpdatesAppState() {
@@ -56,7 +58,7 @@ class SentryAppStartTrackingIntegrationTests: XCTestCase {
         
         TestNotificationCenter.uiWindowDidBecomeVisible()
         
-        XCTAssertNil(SentrySDK.getAndResetAppStartMeasurement())
+        XCTAssertNil(SentrySDK.getAppStartMeasurement())
     }
     
     func testAutoUIPerformanceTrackingDisabled_DoesNotUpdatesAppState() {
@@ -66,7 +68,7 @@ class SentryAppStartTrackingIntegrationTests: XCTestCase {
         
         TestNotificationCenter.uiWindowDidBecomeVisible()
         
-        XCTAssertNil(SentrySDK.getAndResetAppStartMeasurement())
+        XCTAssertNil(SentrySDK.getAppStartMeasurement())
     }
     
 }

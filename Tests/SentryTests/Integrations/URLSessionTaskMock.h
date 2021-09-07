@@ -7,9 +7,15 @@ NS_ASSUME_NONNULL_BEGIN
  * NSURLSessionTask. Using suppression in implementation to override the init.
  */
 
+static int64_t const DATA_BYTES_RECEIVED = 256;
+static int64_t const DATA_BYTES_SENT = 652;
+
 @interface URLSessionDataTaskMock : NSURLSessionDataTask
 
+@property (nullable, readonly) NSDate *resumeDate;
 @property (nonatomic) NSURLSessionTaskState state;
+
+- (instancetype)init;
 
 - (instancetype)initWithRequest:(NSURLRequest *)request;
 
@@ -20,7 +26,10 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface URLSessionDownloadTaskMock : NSURLSessionDownloadTask
+
 @property (nonatomic) NSURLSessionTaskState state;
+
+@property (nonatomic, copy) NSError *error;
 
 - (instancetype)initWithRequest:(NSURLRequest *)request;
 
@@ -45,6 +54,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithRequest:(NSURLRequest *)request;
 
 - (void)setResponse:(NSURLResponse *)response;
+
+@end
+
+@interface URLSessionUnsupportedTaskMock : NSURLSessionTask
+
+- (instancetype)initWithRequest:(NSURLRequest *)request;
+
+- (NSURLRequest *)currentRequest NS_UNAVAILABLE;
 
 @end
 
