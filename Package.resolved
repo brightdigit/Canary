@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Prch",
+        "repositoryURL": "https://github.com/brightdigit/Prch.git",
+        "state": {
+          "branch": null,
+          "revision": "a9ab8e43e65073378a8e95a7a63b87718bff1a7b",
+          "version": "0.1.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
