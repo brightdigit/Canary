@@ -6,8 +6,13 @@
 import Foundation
 import Prch
 
-
 extension Events {
+  
+  public struct Metadata : Codable, Equatable {
+    public let type : String?
+    public let value : String?
+    public let title: String?
+  }
 
     /** Return details on an individual issue. This returns the basic stats for the issue (title, last seen, first seen), some overall numbers (number of comments, user reports) as well as the summarized event data. */
     public enum RetrieveAnIssue {
@@ -60,7 +65,7 @@ extension Events {
 
                 public var annotations: [String]
 
-                public var assignedTo: [String: Any]?
+                public var assignedTo: [String: AnyCodable]?
 
                 public var count: String
 
@@ -80,7 +85,7 @@ extension Events {
 
                 public var isSubscribed: Bool
 
-                public var lastRelease: [String: Any]?
+                public var lastRelease: [String: AnyCodable]?
 
                 public var lastSeen: String
 
@@ -92,7 +97,7 @@ extension Events {
 
                 public var numComments: Int
 
-                public var participants: [[String: Any]]
+                public var participants: [[String: AnyCodable]]
 
                 public var permalink: String
 
@@ -100,11 +105,11 @@ extension Events {
 
                 public var pluginContexts: [String]
 
-                public var pluginIssues: [[String: Any]]
+                public var pluginIssues: [[String: AnyCodable]]
 
                 public var project: Project
 
-                public var seenBy: [[String: Any]]
+                public var seenBy: [[String: AnyCodable]]
 
                 public var shareId: String?
 
@@ -114,11 +119,11 @@ extension Events {
 
                 public var status: Status
 
-                public var statusDetails: [String: Any]
+                public var statusDetails: [String: AnyCodable]
 
-                public var subscriptionDetails: [String: Any]?
+                public var subscriptionDetails: [String: AnyCodable]?
 
-                public var tags: [[String: Any]]
+                public var tags: [[String: AnyCodable]]
 
                 public var title: String
 
@@ -131,7 +136,7 @@ extension Events {
                 /** Return details on an individual issue. This returns the basic stats for the issue (title, last seen, first seen), some overall numbers (number of comments, user reports) as well as the summarized event data. */
                 public struct Activity: Model {
 
-                    public var data: [String: Any]?
+                    public var data: [String: AnyCodable]?
 
                     public var dateCreated: String?
 
@@ -139,9 +144,9 @@ extension Events {
 
                     public var type: String?
 
-                    public var user: [String: Any]?
+                    public var user: [String: AnyCodable]?
 
-                    public init(data: [String: Any]? = nil, dateCreated: String? = nil, id: String? = nil, type: String? = nil, user: [String: Any]? = nil) {
+                    public init(data: [String: AnyCodable]? = nil, dateCreated: String? = nil, id: String? = nil, type: String? = nil, user: [String: AnyCodable]? = nil) {
                         self.data = data
                         self.dateCreated = dateCreated
                         self.id = id
@@ -178,7 +183,7 @@ extension Events {
 
                     public var commitCount: Int?
 
-                    public var data: [String: Any]?
+                    public var data: [String: AnyCodable]?
 
                     public var dateCreated: String?
 
@@ -236,7 +241,7 @@ extension Events {
 
                     }
 
-                    public init(authors: [String]? = nil, commitCount: Int? = nil, data: [String: Any]? = nil, dateCreated: String? = nil, dateReleased: String? = nil, deployCount: Int? = nil, firstEvent: String? = nil, lastCommit: String? = nil, lastDeploy: String? = nil, lastEvent: String? = nil, newGroups: Int? = nil, owner: String? = nil, projects: [Projects]? = nil, ref: String? = nil, shortVersion: String? = nil, url: String? = nil, version: String? = nil) {
+                    public init(authors: [String]? = nil, commitCount: Int? = nil, data: [String: AnyCodable]? = nil, dateCreated: String? = nil, dateReleased: String? = nil, deployCount: Int? = nil, firstEvent: String? = nil, lastCommit: String? = nil, lastDeploy: String? = nil, lastEvent: String? = nil, newGroups: Int? = nil, owner: String? = nil, projects: [Projects]? = nil, ref: String? = nil, shortVersion: String? = nil, url: String? = nil, version: String? = nil) {
                         self.authors = authors
                         self.commitCount = commitCount
                         self.data = data
@@ -363,7 +368,7 @@ extension Events {
 
                 }
 
-                public init(activity: [Activity], annotations: [String], assignedTo: [String: Any]?, count: String, culprit: String, firstRelease: FirstRelease?, firstSeen: String, hasSeen: Bool, id: String, isBookmarked: Bool, isPublic: Bool, isSubscribed: Bool, lastRelease: [String: Any]?, lastSeen: String, level: String, logger: String?, metadata: Metadata, numComments: Int, participants: [[String: Any]], permalink: String, pluginActions: [[String]], pluginContexts: [String], pluginIssues: [[String: Any]], project: Project, seenBy: [[String: Any]], shareId: String?, shortId: String, stats: Stats, status: Status, statusDetails: [String: Any], subscriptionDetails: [String: Any]?, tags: [[String: Any]], title: String, type: String, userCount: Int, userReportCount: Int) {
+                public init(activity: [Activity], annotations: [String], assignedTo: [String: AnyCodable]?, count: String, culprit: String, firstRelease: FirstRelease?, firstSeen: String, hasSeen: Bool, id: String, isBookmarked: Bool, isPublic: Bool, isSubscribed: Bool, lastRelease: [String: AnyCodable]?, lastSeen: String, level: String, logger: String?, metadata: Metadata, numComments: Int, participants: [[String: AnyCodable]], permalink: String, pluginActions: [[String]], pluginContexts: [String], pluginIssues: [[String: AnyCodable]], project: Project, seenBy: [[String: AnyCodable]], shareId: String?, shortId: String, stats: Stats, status: Status, statusDetails: [String: AnyCodable], subscriptionDetails: [String: AnyCodable]?, tags: [[String: AnyCodable]], title: String, type: String, userCount: Int, userReportCount: Int) {
                     self.activity = activity
                     self.annotations = annotations
                     self.assignedTo = assignedTo

@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Teams {
 
     /** Returns a list of teams bound to a organization. */

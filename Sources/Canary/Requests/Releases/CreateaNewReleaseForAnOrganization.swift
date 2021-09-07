@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Releases {
 
     /** Create a new release for the given organization.  Releases are used by
@@ -277,11 +276,11 @@ that require manual upload for functioning well. */
             that require manual upload for functioning well. */
             public struct Status201: Model {
 
-                public var authors: [[String: Any]]
+                public var authors: [[String: AnyCodable]]
 
                 public var commitCount: Int
 
-                public var data: [String: Any]
+                public var data: [String: AnyCodable]
 
                 public var dateCreated: DateTime
 
@@ -291,15 +290,15 @@ that require manual upload for functioning well. */
 
                 public var firstEvent: DateTime?
 
-                public var lastCommit: [String: Any]?
+                public var lastCommit: [String: AnyCodable]?
 
-                public var lastDeploy: [String: Any]?
+                public var lastDeploy: [String: AnyCodable]?
 
                 public var lastEvent: DateTime?
 
                 public var newGroups: Int
 
-                public var owner: [String: Any]?
+                public var owner: [String: AnyCodable]?
 
                 public var projects: [Projects]
 
@@ -344,7 +343,7 @@ that require manual upload for functioning well. */
 
                 }
 
-                public init(authors: [[String: Any]], commitCount: Int, data: [String: Any], dateCreated: DateTime, dateReleased: DateTime?, deployCount: Int, firstEvent: DateTime?, lastCommit: [String: Any]?, lastDeploy: [String: Any]?, lastEvent: DateTime?, newGroups: Int, owner: [String: Any]?, projects: [Projects], ref: String?, shortVersion: String, version: String, url: String?) {
+                public init(authors: [[String: AnyCodable]], commitCount: Int, data: [String: AnyCodable], dateCreated: DateTime, dateReleased: DateTime?, deployCount: Int, firstEvent: DateTime?, lastCommit: [String: AnyCodable]?, lastDeploy: [String: AnyCodable]?, lastEvent: DateTime?, newGroups: Int, owner: [String: AnyCodable]?, projects: [Projects], ref: String?, shortVersion: String, version: String, url: String?) {
                     self.authors = authors
                     self.commitCount = commitCount
                     self.data = data

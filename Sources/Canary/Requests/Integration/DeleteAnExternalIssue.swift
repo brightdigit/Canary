@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Integration {
 
     /** Delete an external issue. */

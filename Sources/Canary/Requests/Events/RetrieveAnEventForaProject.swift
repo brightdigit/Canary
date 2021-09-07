@@ -6,7 +6,7 @@
 import Foundation
 import Prch
 
-
+#if false
 extension Events {
 
     /** Return details on an individual event. */
@@ -61,7 +61,7 @@ extension Events {
 
                 public var dist: String?
 
-                public var userReport: [String: Any]?
+                public var userReport: [String: AnyCodable]?
 
                 public var previousEventID: String?
 
@@ -91,19 +91,19 @@ extension Events {
 
                 public var entries: [Entries]
 
-                public var packages: [String: Any]
+                public var packages: [String: AnyCodable]
 
                 public var sdk: Sdk
 
                 public var meta: Meta
 
-                public var contexts: [String: Any]
+                public var contexts: [String: AnyCodable]
 
                 public var fingerprints: [String]
 
-                public var context: [String: Any]
+                public var context: [String: AnyCodable]
 
-                public var release: [String: Any]?
+                public var release: [String: AnyCodable]?
 
                 public var groupID: String
 
@@ -112,13 +112,13 @@ extension Events {
                 /** Return details on an individual event. */
                 public struct Errors: Model {
 
-                    public var data: [String: Any]?
+                    public var data: [String: AnyCodable]?
 
                     public var message: String?
 
                     public var type: String?
 
-                    public init(data: [String: Any]? = nil, message: String? = nil, type: String? = nil) {
+                    public init(data: [String: AnyCodable]? = nil, message: String? = nil, type: String? = nil) {
                         self.data = data
                         self.message = message
                         self.type = type
@@ -281,7 +281,7 @@ extension Events {
 
                     public var contexts: String?
 
-                    public var entries: [String: Any]?
+                    public var entries: [String: AnyCodable]?
 
                     public var message: String?
 
@@ -289,11 +289,11 @@ extension Events {
 
                     public var sdk: String?
 
-                    public var tags: [String: Any]?
+                    public var tags: [String: AnyCodable]?
 
                     public var user: String?
 
-                    public init(context: String? = nil, contexts: String? = nil, entries: [String: Any]? = nil, message: String? = nil, packages: String? = nil, sdk: String? = nil, tags: [String: Any]? = nil, user: String? = nil) {
+                    public init(context: String? = nil, contexts: String? = nil, entries: [String: AnyCodable]? = nil, message: String? = nil, packages: String? = nil, sdk: String? = nil, tags: [String: AnyCodable]? = nil, user: String? = nil) {
                         self.context = context
                         self.contexts = contexts
                         self.entries = entries
@@ -332,7 +332,7 @@ extension Events {
 
                 }
 
-                public init(eventID: String, dist: String?, userReport: [String: Any]?, previousEventID: String?, message: String, id: String, size: Int, errors: [Errors], platform: String, nextEventID: String?, type: String, metadata: Metadata, tags: [Tags], dateCreated: String, dateReceived: String, user: User?, entries: [Entries], packages: [String: Any], sdk: Sdk, meta: Meta, contexts: [String: Any], fingerprints: [String], context: [String: Any], release: [String: Any]?, groupID: String, title: String) {
+                public init(eventID: String, dist: String?, userReport: [String: AnyCodable]?, previousEventID: String?, message: String, id: String, size: Int, errors: [Errors], platform: String, nextEventID: String?, type: String, metadata: Metadata, tags: [Tags], dateCreated: String, dateReceived: String, user: User?, entries: [Entries], packages: [String: AnyCodable], sdk: Sdk, meta: Meta, contexts: [String: AnyCodable], fingerprints: [String], context: [String: AnyCodable], release: [String: AnyCodable]?, groupID: String, title: String) {
                     self.eventID = eventID
                     self.dist = dist
                     self.userReport = userReport
@@ -483,3 +483,4 @@ extension Events {
         }
     }
 }
+#endif

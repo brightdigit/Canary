@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Releases {
 
     /** Returns a time series of release health session statistics for projects bound to an organization.
@@ -156,15 +155,15 @@ Intervals larger than `1d` are not supported, and the interval has to cleanly di
                 public struct Groups: Model {
 
                     /** These are key/value pairs, the key being the requested `groupBy` property with its corresponding value. */
-                    public var by: [String: Any]
+                    public var by: [String: AnyCodable]
 
                     /** These are key/value pairs, the key being the requested `field`, and the value the corresponding total over the requested time frame. */
-                    public var totals: [String: Any]
+                    public var totals: [String: AnyCodable]
 
                     /** These are key/value pairs, the key being the requested `field`, and the value is an array of aggregated values. The array corresponds to the times given in the `intervals` array. */
-                    public var series: [String: Any]
+                    public var series: [String: AnyCodable]
 
-                    public init(by: [String: Any], totals: [String: Any], series: [String: Any]) {
+                    public init(by: [String: AnyCodable], totals: [String: AnyCodable], series: [String: AnyCodable]) {
                         self.by = by
                         self.totals = totals
                         self.series = series

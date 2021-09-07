@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Releases {
 
     /** Return a list of deploys for a given release. */

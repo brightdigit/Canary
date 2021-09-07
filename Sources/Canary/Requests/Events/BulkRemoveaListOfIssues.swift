@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Events {
 
     /** Permanently remove the given issues. The list of issues to modify is given through the `id` query parameter.  It is repeated for each issue that should be removed.

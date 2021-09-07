@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Projects {
 
     /** Upload a new debug information file for the given release.
@@ -58,7 +57,7 @@ will create different files for the contained images. */
 
             public override var formParameters: [String: Any] {
                 var params: [String: Any] = [:]
-                params["file"] = options.file.encode()
+              params["file"] = options.file.base64EncodedString(options:)
                 return params
             }
         }

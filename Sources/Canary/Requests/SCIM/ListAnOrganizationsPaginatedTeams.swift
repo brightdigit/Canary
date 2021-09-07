@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension SCIM {
 
     /** Returns a paginated list of teams bound to a organization with a SCIM Groups GET Request.

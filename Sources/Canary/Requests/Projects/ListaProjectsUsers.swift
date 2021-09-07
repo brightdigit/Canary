@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Projects {
 
     /** Return a list of users seen within this project. */

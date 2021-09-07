@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Organizations {
 
     /** Return a list of organizations available to the authenticated session.  This is particularly useful for requests with an user bound context.  For API key based requests this will only return the organization that belongs to the key. */

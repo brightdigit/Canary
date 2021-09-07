@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Releases {
 
     /** Retrieve files changed in a release's commits */

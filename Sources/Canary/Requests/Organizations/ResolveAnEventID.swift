@@ -6,7 +6,7 @@
 import Foundation
 import Prch
 
-
+#if false
 extension Organizations {
 
     /** This resolves an event ID to the project slug and internal issue ID and internal event ID. */
@@ -70,7 +70,7 @@ extension Organizations {
 
                     public var context: Context
 
-                    public var contexts: [String: Any]
+                    public var contexts: [String: AnyCodable]
 
                     public var dateCreated: String
 
@@ -98,7 +98,7 @@ extension Organizations {
 
                     public var platform: String
 
-                    public var sdk: [String: Any]?
+                    public var sdk: [String: AnyCodable]?
 
                     public var size: Int
 
@@ -115,9 +115,9 @@ extension Organizations {
 
                         public var context: String?
 
-                        public var contexts: [String: Any]?
+                        public var contexts: [String: AnyCodable]?
 
-                        public var entries: [String: Any]?
+                        public var entries: [String: AnyCodable]?
 
                         public var message: String?
 
@@ -125,11 +125,11 @@ extension Organizations {
 
                         public var sdk: String?
 
-                        public var tags: [String: Any]?
+                        public var tags: [String: AnyCodable]?
 
                         public var user: String?
 
-                        public init(context: String? = nil, contexts: [String: Any]? = nil, entries: [String: Any]? = nil, message: String? = nil, packages: String? = nil, sdk: String? = nil, tags: [String: Any]? = nil, user: String? = nil) {
+                        public init(context: String? = nil, contexts: [String: AnyCodable]? = nil, entries: [String: AnyCodable]? = nil, message: String? = nil, packages: String? = nil, sdk: String? = nil, tags: [String: AnyCodable]? = nil, user: String? = nil) {
                             self.context = context
                             self.contexts = contexts
                             self.entries = entries
@@ -171,9 +171,9 @@ extension Organizations {
                     /** This resolves an event ID to the project slug and internal issue ID and internal event ID. */
                     public struct Context: Model {
 
-                        public var emptyList: [Any]?
+                        public var emptyList: [AnyCodable]?
 
-                        public var emptyMap: [String: Any]?
+                        public var emptyMap: [String: AnyCodable]?
 
                         public var length: Int?
 
@@ -208,7 +208,7 @@ extension Organizations {
 
                         }
 
-                        public init(emptyList: [Any]? = nil, emptyMap: [String: Any]? = nil, length: Int? = nil, results: [Int]? = nil, session: Session? = nil, unauthorized: Bool? = nil, url: String? = nil) {
+                        public init(emptyList: [AnyCodable]? = nil, emptyMap: [String: AnyCodable]? = nil, length: Int? = nil, results: [Int]? = nil, session: Session? = nil, unauthorized: Bool? = nil, url: String? = nil) {
                             self.emptyList = emptyList
                             self.emptyMap = emptyMap
                             self.length = length
@@ -247,13 +247,13 @@ extension Organizations {
                     /** This resolves an event ID to the project slug and internal issue ID and internal event ID. */
                     public struct Errors: Model {
 
-                        public var data: [String: Any]?
+                        public var data: [String: AnyCodable]?
 
                         public var message: String?
 
                         public var type: String?
 
-                        public init(data: [String: Any]? = nil, message: String? = nil, type: String? = nil) {
+                        public init(data: [String: AnyCodable]? = nil, message: String? = nil, type: String? = nil) {
                             self.data = data
                             self.message = message
                             self.type = type
@@ -427,7 +427,7 @@ extension Organizations {
 
                     }
 
-                    public init(meta: Meta, context: Context, contexts: [String: Any], dateCreated: String, dateReceived: String, dist: String?, entries: [Entries], errors: [Errors], eventID: String, fingerprints: [String], groupID: String, id: String, message: String, metadata: Metadata, packages: Packages, platform: String, sdk: [String: Any]?, size: Int, tags: [Tags], type: String, user: User?, title: String) {
+                    public init(meta: Meta, context: Context, contexts: [String: AnyCodable], dateCreated: String, dateReceived: String, dist: String?, entries: [Entries], errors: [Errors], eventID: String, fingerprints: [String], groupID: String, id: String, message: String, metadata: Metadata, packages: Packages, platform: String, sdk: [String: AnyCodable]?, size: Int, tags: [Tags], type: String, user: User?, title: String) {
                         self.meta = meta
                         self.context = context
                         self.contexts = contexts
@@ -608,3 +608,4 @@ extension Organizations {
         }
     }
 }
+#endif

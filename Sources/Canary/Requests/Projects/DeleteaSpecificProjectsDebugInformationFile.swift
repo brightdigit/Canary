@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Projects {
 
     /** Delete a debug information file for a given project. */

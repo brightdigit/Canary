@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension SCIM {
 
     /** Delete an organization member with a SCIM User DELETE Request. */

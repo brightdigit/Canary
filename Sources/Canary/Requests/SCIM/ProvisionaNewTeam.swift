@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension SCIM {
 
     /** Create a new team bound to an organization via a SCIM Groups POST Request. Note that teams are always created with an empty member set. The endpoint will also do a normalization of uppercase / spaces to lowercase and dashes. */

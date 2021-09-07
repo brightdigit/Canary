@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Releases {
 
     /** Upload a new organization release file. */
@@ -65,7 +64,7 @@ extension Releases {
 
             public override var formParameters: [String: Any] {
                 var params: [String: Any] = [:]
-                params["file"] = options.file.encode()
+              params["file"] = options.file.base64EncodedString(options:)
                 if let dist = options.dist {
                   params["dist"] = dist
                 }

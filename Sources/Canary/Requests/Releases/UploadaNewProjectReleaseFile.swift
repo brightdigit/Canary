@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Releases {
 
     /** Upload a new project release file. */
@@ -69,7 +68,7 @@ extension Releases {
 
             public override var formParameters: [String: Any] {
                 var params: [String: Any] = [:]
-                params["file"] = options.file.encode()
+              params["file"] = options.file.base64EncodedString(options:)
                 if let dist = options.dist {
                   params["dist"] = dist
                 }
@@ -96,13 +95,13 @@ extension Releases {
 
                 public var dateCreated: DateTime
 
-                public var headers: Headers
+                public var headers: [String: AnyCodable]
 
                 public var id: String
 
                 public var size: Int
 
-                public init(sha1: String, dist: String?, name: String, dateCreated: DateTime, headers: Headers, id: String, size: Int) {
+                public init(sha1: String, dist: String?, name: String, dateCreated: DateTime, headers: [String: AnyCodable], id: String, size: Int) {
                     self.sha1 = sha1
                     self.dist = dist
                     self.name = name

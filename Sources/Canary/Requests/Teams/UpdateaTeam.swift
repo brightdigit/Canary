@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Teams {
 
     /** Update various attributes and configurable settings for the given team. */

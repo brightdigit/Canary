@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Teams {
 
     /** Return details on an individual team. */

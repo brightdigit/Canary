@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Events {
 
     /** Bulk mutate various attributes on issues.  The list of issues to modify is given through the `id` query parameter.  It is repeated for each issue that should be modified.
@@ -240,9 +239,9 @@ If any ids are out of scope this operation will succeed without any data mutatio
 
                 public var status: Status
 
-                public var statusDetails: [String: Any]
+                public var statusDetails: [String: AnyCodable]
 
-                public init(isPublic: Bool, status: Status, statusDetails: [String: Any]) {
+                public init(isPublic: Bool, status: Status, statusDetails: [String: AnyCodable]) {
                     self.isPublic = isPublic
                     self.status = status
                     self.statusDetails = statusDetails

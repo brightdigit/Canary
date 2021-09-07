@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Organizations {
 
     /** Return a list of version control repositories for a given organization. */

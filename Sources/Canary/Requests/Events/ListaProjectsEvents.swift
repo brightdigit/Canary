@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Events {
 
     /** Return a list of events bound to a project. */

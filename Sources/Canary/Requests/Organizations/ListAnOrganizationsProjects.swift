@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Organizations {
 
     /** Return a list of projects bound to a organization. */
@@ -83,7 +82,7 @@ extension Organizations {
 
                 public var slug: String
 
-                public var team: [String: Any]?
+                public var team: [String: AnyCodable]?
 
                 public var teams: [Teams]
 
@@ -120,7 +119,7 @@ extension Organizations {
 
                 }
 
-                public init(dateCreated: String, firstEvent: String?, hasAccess: Bool, id: String, isBookmarked: Bool, isMember: Bool, latestDeploys: String?, name: String, platform: String?, platforms: [String], slug: String, team: [String: Any]?, teams: [Teams]) {
+                public init(dateCreated: String, firstEvent: String?, hasAccess: Bool, id: String, isBookmarked: Bool, isMember: Bool, latestDeploys: String?, name: String, platform: String?, platforms: [String], slug: String, team: [String: AnyCodable]?, teams: [Teams]) {
                     self.dateCreated = dateCreated
                     self.firstEvent = firstEvent
                     self.hasAccess = hasAccess

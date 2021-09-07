@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Teams {
 
     /** Create a new team bound to an organization. Only the name of the team is needed to create it, the slug can be auto generated. */

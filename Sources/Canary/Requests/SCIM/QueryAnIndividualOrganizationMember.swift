@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension SCIM {
 
     /** Query an individual organization member with a SCIM User GET Request.

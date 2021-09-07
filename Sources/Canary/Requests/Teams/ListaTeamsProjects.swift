@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Teams {
 
     /** Return a list of projects bound to a team. */

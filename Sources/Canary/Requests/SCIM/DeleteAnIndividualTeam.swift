@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension SCIM {
 
     /** Delete a team with a SCIM Group DELETE Request. */

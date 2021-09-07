@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Releases {
 
     /** Retrieve a file for a given release. */
@@ -65,13 +64,13 @@ extension Releases {
 
                 public var dateCreated: DateTime
 
-                public var headers: Headers
+                public var headers: [String: AnyCodable]
 
                 public var id: String
 
                 public var size: Int
 
-                public init(sha1: String, dist: String?, name: String, dateCreated: DateTime, headers: Headers, id: String, size: Int) {
+                public init(sha1: String, dist: String?, name: String, dateCreated: DateTime, headers: [String: AnyCodable], id: String, size: Int) {
                     self.sha1 = sha1
                     self.dist = dist
                     self.name = name

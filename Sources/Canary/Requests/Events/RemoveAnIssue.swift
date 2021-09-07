@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Events {
 
     /** Removes an individual issue. */

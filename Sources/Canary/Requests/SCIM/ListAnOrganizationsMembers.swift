@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension SCIM {
 
     /** Returns a paginated list of members bound to a organization with a SCIM Users GET Request. */

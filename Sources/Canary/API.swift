@@ -6,20 +6,19 @@
 import Foundation
 import Prch
 
-
 /** Sentry Public API */
 public struct API {
-//
-//    /// Whether to discard any errors when decoding optional properties
-//    public static var safeOptionalDecoding = false
-//
-//    /// Whether to remove invalid elements instead of throwing when decoding arrays
-//    public static var safeArrayDecoding = false
-//
-//    /// Used to encode Dates when uses as string params
-//    public static var dateEncodingFormatter = DateFormatter(formatString: "yyyy-MM-dd'T'HH:mm:ssZZZZZ",
-//                                                            locale: Locale(identifier: "en_US_POSIX"),
-//                                                            calendar: Calendar(identifier: .gregorian))
+
+    /// Whether to discard any errors when decoding optional properties
+    public static var safeOptionalDecoding = false
+
+    /// Whether to remove invalid elements instead of throwing when decoding arrays
+    public static var safeArrayDecoding = false
+
+    /// Used to encode Dates when uses as string params
+    public static var dateEncodingFormatter = DateFormatter(formatString: "yyyy-MM-dd'T'HH:mm:ssZZZZZ",
+                                                            locale: Locale(identifier: "en_US_POSIX"),
+                                                            calendar: Calendar(identifier: .gregorian))
 
     public static let version = "v0"
 
@@ -29,6 +28,7 @@ public struct API {
         public static let main = "https://sentry.io/"
     }
 }
+
 
 public enum Events {}
 public enum Integration {}

@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Integration {
 
     /** Return a list of integration platform installations for a given organization. */

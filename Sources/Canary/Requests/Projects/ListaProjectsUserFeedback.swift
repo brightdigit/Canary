@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Projects {
 
     /** Return a list of user feedback items within this project. */
@@ -65,11 +64,11 @@ extension Projects {
 
                 public var id: String
 
-                public var issue: [String: Any]?
+                public var issue: [String: AnyCodable]?
 
                 public var name: String
 
-                public var user: [String: Any]?
+                public var user: [String: AnyCodable]?
 
                 /** Return a list of user feedback items within this project. */
                 public struct Event: Model {
@@ -99,7 +98,7 @@ extension Projects {
 
                 }
 
-                public init(comments: String, dateCreated: String, email: String, event: Event, eventID: String, id: String, issue: [String: Any]?, name: String, user: [String: Any]?) {
+                public init(comments: String, dateCreated: String, email: String, event: Event, eventID: String, id: String, issue: [String: AnyCodable]?, name: String, user: [String: AnyCodable]?) {
                     self.comments = comments
                     self.dateCreated = dateCreated
                     self.email = email

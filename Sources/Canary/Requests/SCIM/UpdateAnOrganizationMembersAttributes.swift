@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension SCIM {
 
     /** Update an organization member's attributes with a SCIM PATCH Request. The only supported attribute is `active`. After setting `active` to false Sentry will permanently delete the Organization Member. */
@@ -21,9 +20,9 @@ extension SCIM {
 
                 public var schemas: [String]
 
-                public var operations: [[String: Any]]
+                public var operations: [[String: AnyCodable]]
 
-                public init(schemas: [String], operations: [[String: Any]]) {
+                public init(schemas: [String], operations: [[String: AnyCodable]]) {
                     self.schemas = schemas
                     self.operations = operations
                 }

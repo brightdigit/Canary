@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Events {
 
     /** Return a list of issues (groups) bound to a project.  All parameters are supplied as query string parameters. 
@@ -111,7 +110,7 @@ The ``statsPeriod`` parameter can be used to select the timeline stats which sho
 
                 public var id: String
 
-                public var assignedTo: [String: Any]?
+                public var assignedTo: [String: AnyCodable]?
 
                 public var logger: String?
 
@@ -125,7 +124,7 @@ The ``statsPeriod`` parameter can be used to select the timeline stats which sho
 
                 public var status: Status
 
-                public var subscriptionDetails: [String: Any]?
+                public var subscriptionDetails: [String: AnyCodable]?
 
                 public var isPublic: Bool
 
@@ -149,7 +148,7 @@ The ``statsPeriod`` parameter can be used to select the timeline stats which sho
 
                 public var project: Project
 
-                public var statusDetails: [String: Any]
+                public var statusDetails: [String: AnyCodable]
 
                 /** Return a list of issues (groups) bound to a project.  All parameters are supplied as query string parameters. 
                  A default query of ``is:unresolved`` is applied. To return results with other statuses send an new query value (i.e. ``?query=`` for all results).
@@ -211,7 +210,7 @@ The ``statsPeriod`` parameter can be used to select the timeline stats which sho
 
                 }
 
-                public init(lastSeen: String, numComments: Int, userCount: Int, culprit: String, title: String, id: String, assignedTo: [String: Any]?, logger: String?, stats: Stats, type: String, annotations: [String], metadata: Metadata, status: Status, subscriptionDetails: [String: Any]?, isPublic: Bool, hasSeen: Bool, shortId: String, shareId: String?, firstSeen: String, count: String, permalink: String, level: String, isSubscribed: Bool, isBookmarked: Bool, project: Project, statusDetails: [String: Any]) {
+                public init(lastSeen: String, numComments: Int, userCount: Int, culprit: String, title: String, id: String, assignedTo: [String: AnyCodable]?, logger: String?, stats: Stats, type: String, annotations: [String], metadata: Metadata, status: Status, subscriptionDetails: [String: AnyCodable]?, isPublic: Bool, hasSeen: Bool, shortId: String, shareId: String?, firstSeen: String, count: String, permalink: String, level: String, isSubscribed: Bool, isBookmarked: Bool, project: Project, statusDetails: [String: AnyCodable]) {
                     self.lastSeen = lastSeen
                     self.numComments = numComments
                     self.userCount = userCount

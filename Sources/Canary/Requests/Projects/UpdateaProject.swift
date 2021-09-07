@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Projects {
 
     /** Update various attributes and configurable settings for the given project.  Only supplied values are updated. */
@@ -233,7 +232,7 @@ extension Projects {
 
                     public var commitCount: Int
 
-                    public var data: [String: Any]
+                    public var data: [String: AnyCodable]
 
                     public var dateCreated: String
 
@@ -243,9 +242,9 @@ extension Projects {
 
                     public var firstEvent: String?
 
-                    public var lastCommit: [String: Any]?
+                    public var lastCommit: [String: AnyCodable]?
 
-                    public var lastDeploy: [String: Any]?
+                    public var lastDeploy: [String: AnyCodable]?
 
                     public var lastEvent: String?
 
@@ -319,7 +318,7 @@ extension Projects {
 
                     }
 
-                    public init(authors: [Authors], commitCount: Int, data: [String: Any], dateCreated: String, dateReleased: String?, deployCount: Int, firstEvent: String?, lastCommit: [String: Any]?, lastDeploy: [String: Any]?, lastEvent: String?, newGroups: Int, owner: String?, projects: [Projects], ref: String?, shortVersion: String, url: String?, version: String) {
+                    public init(authors: [Authors], commitCount: Int, data: [String: AnyCodable], dateCreated: String, dateReleased: String?, deployCount: Int, firstEvent: String?, lastCommit: [String: AnyCodable]?, lastDeploy: [String: AnyCodable]?, lastEvent: String?, newGroups: Int, owner: String?, projects: [Projects], ref: String?, shortVersion: String, url: String?, version: String) {
                         self.authors = authors
                         self.commitCount = commitCount
                         self.data = data
@@ -637,7 +636,7 @@ extension Projects {
 
                     public var isTestable: Bool
 
-                    public var metadata: [String: Any]
+                    public var metadata: [String: AnyCodable]
 
                     public var name: String
 
@@ -713,7 +712,7 @@ extension Projects {
 
                     }
 
-                    public init(assets: [String], canDisable: Bool, contexts: [String], doc: String, enabled: Bool, hasConfiguration: Bool, id: String, isTestable: Bool, metadata: [String: Any], name: String, shortName: String, slug: String, status: String, type: String, author: Author? = nil, description: String? = nil, resourceLinks: [ResourceLinks]? = nil, version: String? = nil) {
+                    public init(assets: [String], canDisable: Bool, contexts: [String], doc: String, enabled: Bool, hasConfiguration: Bool, id: String, isTestable: Bool, metadata: [String: AnyCodable], name: String, shortName: String, slug: String, status: String, type: String, author: Author? = nil, description: String? = nil, resourceLinks: [ResourceLinks]? = nil, version: String? = nil) {
                         self.assets = assets
                         self.canDisable = canDisable
                         self.contexts = contexts

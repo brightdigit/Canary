@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Projects {
 
     /** Submit and associate user feedback with an issue.
@@ -124,11 +123,11 @@ Note: Feedback may be submitted with DSN authentication (see auth documentation)
 
                 public var id: String
 
-                public var issue: [String: Any]?
+                public var issue: [String: AnyCodable]?
 
                 public var name: String
 
-                public var user: [String: Any]?
+                public var user: [String: AnyCodable]?
 
                 /** Submit and associate user feedback with an issue.
                 Feedback must be received by the server no more than 30 minutes after the event was saved.
@@ -162,7 +161,7 @@ Note: Feedback may be submitted with DSN authentication (see auth documentation)
 
                 }
 
-                public init(comments: String, dateCreated: String, email: String, event: Event, eventID: String, id: String, issue: [String: Any]?, name: String, user: [String: Any]?) {
+                public init(comments: String, dateCreated: String, email: String, event: Event, eventID: String, id: String, issue: [String: AnyCodable]?, name: String, user: [String: AnyCodable]?) {
                     self.comments = comments
                     self.dateCreated = dateCreated
                     self.email = email

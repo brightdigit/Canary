@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Organizations {
 
     /** This resolves a short ID to the project slug and internal issue ID. */
@@ -121,7 +120,7 @@ extension Organizations {
 
                     public var project: Project
 
-                    public var statusDetails: [String: Any]
+                    public var statusDetails: [String: AnyCodable]
 
                     /** This resolves a short ID to the project slug and internal issue ID. */
                     public struct AssignedTo: Model {
@@ -255,7 +254,7 @@ extension Organizations {
 
                     }
 
-                    public init(lastSeen: String, numComments: Int, userCount: Int, culprit: String?, title: String, id: String, assignedTo: AssignedTo?, logger: String?, type: String, annotations: [String], metadata: Metadata, status: Status, subscriptionDetails: SubscriptionDetails?, isPublic: Bool, hasSeen: Bool, shortId: String, shareId: String?, firstSeen: String, count: String, permalink: String, level: String, isSubscribed: Bool, isBookmarked: Bool, project: Project, statusDetails: [String: Any]) {
+                    public init(lastSeen: String, numComments: Int, userCount: Int, culprit: String?, title: String, id: String, assignedTo: AssignedTo?, logger: String?, type: String, annotations: [String], metadata: Metadata, status: Status, subscriptionDetails: SubscriptionDetails?, isPublic: Bool, hasSeen: Bool, shortId: String, shareId: String?, firstSeen: String, count: String, permalink: String, level: String, isSubscribed: Bool, isBookmarked: Bool, project: Project, statusDetails: [String: AnyCodable]) {
                         self.lastSeen = lastSeen
                         self.numComments = numComments
                         self.userCount = userCount

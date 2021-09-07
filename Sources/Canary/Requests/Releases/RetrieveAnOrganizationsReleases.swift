@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Releases {
 
     /** Return a release for a given organization. */
@@ -53,11 +52,11 @@ extension Releases {
             /** Return a release for a given organization. */
             public struct Status200: Model {
 
-                public var authors: [[String: Any]]
+                public var authors: [[String: AnyCodable]]
 
                 public var commitCount: Int
 
-                public var data: [String: Any]
+                public var data: [String: AnyCodable]
 
                 public var dateCreated: DateTime
 
@@ -67,15 +66,15 @@ extension Releases {
 
                 public var firstEvent: DateTime?
 
-                public var lastCommit: [String: Any]?
+                public var lastCommit: [String: AnyCodable]?
 
-                public var lastDeploy: [String: Any]?
+                public var lastDeploy: [String: AnyCodable]?
 
                 public var lastEvent: DateTime?
 
                 public var newGroups: Int
 
-                public var owner: [String: Any]?
+                public var owner: [String: AnyCodable]?
 
                 public var projects: [Projects]
 
@@ -115,7 +114,7 @@ extension Releases {
 
                 }
 
-                public init(authors: [[String: Any]], commitCount: Int, data: [String: Any], dateCreated: DateTime, dateReleased: DateTime?, deployCount: Int, firstEvent: DateTime?, lastCommit: [String: Any]?, lastDeploy: [String: Any]?, lastEvent: DateTime?, newGroups: Int, owner: [String: Any]?, projects: [Projects], ref: String?, shortVersion: String, version: String, url: String?) {
+                public init(authors: [[String: AnyCodable]], commitCount: Int, data: [String: AnyCodable], dateCreated: DateTime, dateReleased: DateTime?, deployCount: Int, firstEvent: DateTime?, lastCommit: [String: AnyCodable]?, lastDeploy: [String: AnyCodable]?, lastEvent: DateTime?, newGroups: Int, owner: [String: AnyCodable]?, projects: [Projects], ref: String?, shortVersion: String, version: String, url: String?) {
                     self.authors = authors
                     self.commitCount = commitCount
                     self.data = data

@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Organizations {
 
     /** Return a list of commits for a given repository. */

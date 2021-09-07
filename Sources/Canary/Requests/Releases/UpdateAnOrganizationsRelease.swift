@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Releases {
 
     /** Update a release for a given organization. */
@@ -20,7 +19,7 @@ extension Releases {
             public struct Body: Model {
 
                 /** An optional list of commit data to be associated with the release. Commits must include parameters `id` (the sha of the commit), and can optionally include `repository`, `message`, `author_name`, `author_email`, and `timestamp`. */
-                public var commits: [[String: Any]]?
+                public var commits: [[String: AnyCodable]]?
 
                 /** An optional date that indicates when the release went live. If not provided the current time is assumed. */
                 public var dateReleased: DateTime?
@@ -29,12 +28,12 @@ extension Releases {
                 public var ref: String?
 
                 /** An optional way to indicate the start and end commits for each repository included in a release. Head commits must include parameters `repository` and `commit` (the HEAD sha). They can optionally include `previousCommit` (the sha of the HEAD of the previous release), which should be specified if this is the first time you've sent commit data. */
-                public var refs: [[String: Any]]?
+                public var refs: [[String: AnyCodable]]?
 
                 /** A URL that points to the release. This can be the path to an online interface to the source code for instance. */
                 public var url: String?
 
-                public init(commits: [[String: Any]]? = nil, dateReleased: DateTime? = nil, ref: String? = nil, refs: [[String: Any]]? = nil, url: String? = nil) {
+                public init(commits: [[String: AnyCodable]]? = nil, dateReleased: DateTime? = nil, ref: String? = nil, refs: [[String: AnyCodable]]? = nil, url: String? = nil) {
                     self.commits = commits
                     self.dateReleased = dateReleased
                     self.ref = ref
@@ -106,11 +105,11 @@ extension Releases {
             /** Update a release for a given organization. */
             public struct Status200: Model {
 
-                public var authors: [[String: Any]]
+                public var authors: [[String: AnyCodable]]
 
                 public var commitCount: Int
 
-                public var data: [String: Any]
+                public var data: [String: AnyCodable]
 
                 public var dateCreated: DateTime
 
@@ -120,15 +119,15 @@ extension Releases {
 
                 public var firstEvent: DateTime?
 
-                public var lastCommit: [String: Any]?
+                public var lastCommit: [String: AnyCodable]?
 
-                public var lastDeploy: [String: Any]?
+                public var lastDeploy: [String: AnyCodable]?
 
                 public var lastEvent: DateTime?
 
                 public var newGroups: Int
 
-                public var owner: [String: Any]?
+                public var owner: [String: AnyCodable]?
 
                 public var projects: [Projects]
 
@@ -168,7 +167,7 @@ extension Releases {
 
                 }
 
-                public init(authors: [[String: Any]], commitCount: Int, data: [String: Any], dateCreated: DateTime, dateReleased: DateTime?, deployCount: Int, firstEvent: DateTime?, lastCommit: [String: Any]?, lastDeploy: [String: Any]?, lastEvent: DateTime?, newGroups: Int, owner: [String: Any]?, projects: [Projects], ref: String?, shortVersion: String, version: String, url: String?) {
+                public init(authors: [[String: AnyCodable]], commitCount: Int, data: [String: AnyCodable], dateCreated: DateTime, dateReleased: DateTime?, deployCount: Int, firstEvent: DateTime?, lastCommit: [String: AnyCodable]?, lastDeploy: [String: AnyCodable]?, lastEvent: DateTime?, newGroups: Int, owner: [String: AnyCodable]?, projects: [Projects], ref: String?, shortVersion: String, version: String, url: String?) {
                     self.authors = authors
                     self.commitCount = commitCount
                     self.data = data

@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension SCIM {
 
     /** Update a team's attributes with a SCIM Group PATCH Request. Valid Operations are:

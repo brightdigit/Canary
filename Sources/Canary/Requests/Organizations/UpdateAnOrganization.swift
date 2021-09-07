@@ -6,7 +6,6 @@
 import Foundation
 import Prch
 
-
 extension Organizations {
 
     /** Update various attributes and configurable settings for the given organization. */
@@ -102,7 +101,7 @@ extension Organizations {
 
                 public var enhancedPrivacy: Bool
 
-                public var experiments: [String: Any]
+                public var experiments: [String: AnyCodable]
 
                 public var features: [String]
 
@@ -114,7 +113,7 @@ extension Organizations {
 
                 public var name: String
 
-                public var onboardingTasks: [[String: Any]]
+                public var onboardingTasks: [[String: AnyCodable]]
 
                 public var openMembership: Bool
 
@@ -122,7 +121,7 @@ extension Organizations {
 
                 public var projects: [Projects]
 
-                public var quota: [String: Any]
+                public var quota: [String: AnyCodable]
 
                 public var require2FA: Bool
 
@@ -225,7 +224,7 @@ extension Organizations {
 
                     public var slug: String
 
-                    public var team: [String: Any]?
+                    public var team: [String: AnyCodable]?
 
                     public var teams: [Teams]
 
@@ -262,7 +261,7 @@ extension Organizations {
 
                     }
 
-                    public init(dateCreated: String, firstEvent: String?, hasAccess: Bool, id: String, isBookmarked: Bool, isMember: Bool, latestDeploys: String?, name: String, platform: String?, platforms: [String], slug: String, team: [String: Any]?, teams: [Teams]) {
+                    public init(dateCreated: String, firstEvent: String?, hasAccess: Bool, id: String, isBookmarked: Bool, isMember: Bool, latestDeploys: String?, name: String, platform: String?, platforms: [String], slug: String, team: [String: AnyCodable]?, teams: [Teams]) {
                         self.dateCreated = dateCreated
                         self.firstEvent = firstEvent
                         self.hasAccess = hasAccess
@@ -435,7 +434,7 @@ extension Organizations {
 
                 }
 
-                public init(access: [String], allowSharedIssues: Bool, availableRoles: [AvailableRoles], avatar: Avatar, dataScrubber: Bool, dataScrubberDefaults: Bool, dateCreated: DateTime, defaultRole: String, enhancedPrivacy: Bool, experiments: [String: Any], features: [String], id: String, isDefault: Bool, isEarlyAdopter: Bool, name: String, onboardingTasks: [[String: Any]], openMembership: Bool, pendingAccessRequests: Int, projects: [Projects], quota: [String: Any], require2FA: Bool, safeFields: [String], scrapeJavaScript: Bool, scrubIPAddresses: Bool, sensitiveFields: [String], slug: String, status: Status, storeCrashReports: Int, teams: [Teams], trustedRelays: [String]) {
+                public init(access: [String], allowSharedIssues: Bool, availableRoles: [AvailableRoles], avatar: Avatar, dataScrubber: Bool, dataScrubberDefaults: Bool, dateCreated: DateTime, defaultRole: String, enhancedPrivacy: Bool, experiments: [String: AnyCodable], features: [String], id: String, isDefault: Bool, isEarlyAdopter: Bool, name: String, onboardingTasks: [[String: AnyCodable]], openMembership: Bool, pendingAccessRequests: Int, projects: [Projects], quota: [String: AnyCodable], require2FA: Bool, safeFields: [String], scrapeJavaScript: Bool, scrubIPAddresses: Bool, sensitiveFields: [String], slug: String, status: Status, storeCrashReports: Int, teams: [Teams], trustedRelays: [String]) {
                     self.access = access
                     self.allowSharedIssues = allowSharedIssues
                     self.availableRoles = availableRoles
