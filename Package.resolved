@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "PLCrashReporter",
+        "repositoryURL": "https://github.com/brightdigit/plcrashreporter.git",
+        "state": {
+          "branch": "bugfix/watchOS",
+          "revision": "df1792402e41f52aa9bdb1c5261bf47f39393847",
+          "version": null
+        }
+      },
+      {
         "package": "Prch",
         "repositoryURL": "https://github.com/brightdigit/Prch.git",
         "state": {
