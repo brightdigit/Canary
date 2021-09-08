@@ -1,4 +1,0 @@
-[submodule "Packages/plcrashreporter"]
-	path = Packages/plcrashreporter
-	url = git@github.com:brightdigit/plcrashreporter.git
-	branch = feature/floxbx
