@@ -21,7 +21,7 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         
       .package(url: "https://github.com/brightdigit/Prch.git", from: "0.1.1"),
-      .package(name: "PLCrashReporter", url: "https://github.com/brightdigit/plcrashreporter.git", .branch("bugfix/watchOS"))
+      .package(name: "PLCrashReporter", url: "https://github.com/microsoft/plcrashreporter.git", from: "1.10.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
