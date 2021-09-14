@@ -7,7 +7,15 @@ import Foundation
 import Prch
 
 /** Sentry Public API */
-public struct API {
+public struct CanaryAPI : API {
+  public let baseURL: URL = URL(string: Server.main)!
+  
+  public var headers: [String : String] {
+    return [:]
+  }
+  
+  public var decoder: ResponseDecoder = JSONDecoder()
+  
 
     /// Whether to discard any errors when decoding optional properties
     public static var safeOptionalDecoding = false
