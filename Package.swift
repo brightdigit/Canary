@@ -44,8 +44,8 @@ let package = Package(
             name: "SentryCocoa",
             path: "Sources",
             sources: [
-                "Sentry/",
-                "SentryCrash/"
+                "Sources/Sentry/",
+                "Sources/SentryCrash/"
             ],
             publicHeadersPath: "Sentry/Public/",
             cxxSettings: [
