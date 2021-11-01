@@ -6,7 +6,10 @@
 //
 
 import Foundation
+#if canImport(SentryCocoa)
 import SentryCocoa
+#endif
+
 import SentryVanilla
 
 public struct Scope {
@@ -25,13 +28,14 @@ extension Scope {
   }
 }
 
+#if canImport(SentryCocoa)
 extension SentryCocoa.Scope {
   convenience init(scope: Scope) {
     self.init()
     self.setTags(scope.tags)
   }
 }
-
+#endif
 
 
 extension SentryVanilla.SentryEvent {
@@ -194,14 +198,15 @@ public struct CanaryClient {
   public init() {
   }
   
-  #if os(iOS) || os(watchOS) || os(tvOS)
+  
+  #if canImport(SentryCocoa)
   let sentry = SentryCocoa.SentrySDK.self
   #else
   let sentry = SentryVanilla.Sentry.self
   #endif
 
   public func start(withOptions options: CanaryOptions) throws {
-    #if os(iOS) || os(watchOS) || os(tvOS)
+    #if canImport(SentryCocoa)
     sentry.start { options in
       options.dsn = options.dsn
     }
@@ -214,7 +219,7 @@ public struct CanaryClient {
   }
   
   public func captureError(_ error: Error, withScope scope: Scope) {
-    #if os(iOS) || os(watchOS) || os(tvOS)
+    #if canImport(SentryCocoa)
     self.sentry.capture(error: error, scope: .init(scope: scope))
     #else
     self.sentry.capture(event: .init(error: error), configureScope: scope.configure)
