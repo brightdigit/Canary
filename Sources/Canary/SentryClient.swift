@@ -207,12 +207,12 @@ public struct CanaryClient {
 
   public func start(withOptions options: CanaryOptions) throws {
     #if canImport(SentryCocoa)
-    sentry.start { options in
-      options.dsn = options.dsn
+    sentry.start { newOptions in
+      newOptions.dsn = options.dsn
     }
     #else
-    try sentry.start { options in
-      options.dsn = options.dsn
+    try sentry.start { newOptions in
+      newOptions.dsn = options.dsn
     }
     #endif
     
