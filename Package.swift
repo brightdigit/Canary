@@ -16,6 +16,9 @@ let package = Package(
         .library(
             name: "Canary",
             targets: ["Canary"]),
+        .library(
+            name: "SentryCocoa",
+            targets: ["SentryCocoa"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -44,8 +47,8 @@ let package = Package(
             name: "SentryCocoa",
             path: "Sources",
             sources: [
-                "Sources/Sentry/",
-                "Sources/SentryCrash/"
+                "Sentry/",
+                "SentryCrash/"
             ],
             publicHeadersPath: "Sentry/Public/",
             cxxSettings: [
