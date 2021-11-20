@@ -1,23 +1,22 @@
 import XCTest
 
 class SentrySysctlTests: XCTestCase {
-    
-    private var sut: SentrySysctl!
-    
-    override func setUp() {
-        super.setUp()
-        sut = SentrySysctl()
-    }
+  private var sut: SentrySysctl!
 
-    func testSystemBootTimestamp_IsInThePast() {
-        let distance = Date().timeIntervalSince(sut.systemBootTimestamp)
+  override func setUp() {
+    super.setUp()
+    sut = SentrySysctl()
+  }
 
-        XCTAssertGreaterThan(distance, 0)
-    }
+  func testSystemBootTimestamp_IsInThePast() {
+    let distance = Date().timeIntervalSince(sut.systemBootTimestamp)
 
-    func testProcessStartTimestamp_IsInThePast() {
-        let distance = Date().timeIntervalSince(sut.processStartTimestamp)
+    XCTAssertGreaterThan(distance, 0)
+  }
 
-        XCTAssertGreaterThan(distance, 0)
-    }
+  func testProcessStartTimestamp_IsInThePast() {
+    let distance = Date().timeIntervalSince(sut.processStartTimestamp)
+
+    XCTAssertGreaterThan(distance, 0)
+  }
 }

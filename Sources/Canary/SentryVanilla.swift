@@ -1,15 +1,8 @@
-//
-//  File.swift
-//  
-//
-//  Created by Leo Dion on 11/20/21.
-//
-
 import Foundation
 
-import struct SentryVanilla.SentryEvent
 import class SentryVanilla.Scope
-import class SentryVanilla.Sentry
+import enum SentryVanilla.Sentry
+import struct SentryVanilla.SentryEvent
 typealias SentryVanillaScope = SentryVanilla.Scope
 typealias SentryVanillaSDK = SentryVanilla.Sentry
 

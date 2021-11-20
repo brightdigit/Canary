@@ -1,7 +1,7 @@
 import Foundation
 
 enum SampleError: Error {
-    case bestDeveloper
-    case happyCustomer
-    case awesomeCentaur
+  case bestDeveloper
+  case happyCustomer
+  case awesomeCentaur
 }

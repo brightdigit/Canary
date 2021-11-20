@@ -1,19 +1,7 @@
-//
-//  File.swift
-//  
-//
-//  Created by Leo Dion on 10/29/21.
-//
-
 import Foundation
 
-
-
-
-
-
-//- (SentryEvent *)buildErrorEvent:(NSError *)error
-//{
+// - (SentryEvent *)buildErrorEvent:(NSError *)error
+// {
 //    SentryEvent *event = [[SentryEvent alloc] initWithError:error];
 //
 //    NSString *exceptionValue = [NSString stringWithFormat:@"Code: %ld", (long)error.code];
@@ -38,26 +26,26 @@ import Foundation
 //    [self setUserInfo:userInfo withEvent:event];
 //
 //    return event;
-//}
+// }
 
-//struct CanaryUser {
+// struct CanaryUser {
 //  let userID : String
 //  let email: String?
 //  let username: String?
 //  let ipAddress: String?
 //  let data: [String: Any]?
-//}
+// }
 //
 //
-//public enum Level : Int {
-//case debug = 1,
-//info,
-//warning,
-//error,
-//fatal
-//}
+// public enum Level : Int {
+// case debug = 1,
+// info,
+// warning,
+// error,
+// fatal
+// }
 //
-//public protocol CanaryEvent {
+// public protocol CanaryEvent {
 //  var id: UUID { get }
 //  var message: String? { get }
 //  var error: Error? { get }
@@ -128,48 +116,45 @@ import Foundation
 //   * @return The initialized SentryEvent.
 //   */
 //  - (instancetype)initWithError:(NSError *)error;
-//}
+// }
 
 public struct CanaryOptions {
   public init(dsn: String) {
     self.dsn = dsn
   }
-  
-  let dsn : String
+
+  let dsn: String
 }
+
 public struct CanaryClient {
-  public init() {
-  }
-  
-  
+  public init() {}
+
   #if canImport(Sentry)
-  let sentry = SentryCocoaSDK.self
+    let sentry = SentryCocoaSDK.self
   #else
-  let sentry = SentryVanillaSDK.self
+    let sentry = SentryVanillaSDK.self
   #endif
 
   public func start(withOptions options: CanaryOptions) throws {
     #if canImport(Sentry)
-    sentry.start { newOptions in
-      newOptions.dsn = options.dsn
-    }
+      sentry.start { newOptions in
+        newOptions.dsn = options.dsn
+      }
     #else
-    try sentry.start { newOptions in
-      newOptions.dsn = options.dsn
-    }
+      try sentry.start { newOptions in
+        newOptions.dsn = options.dsn
+      }
     #endif
-    
   }
-  
+
   public func captureError(_ error: Error, withScope scope: Scope) {
     #if canImport(Sentry)
-    
-    self.sentry.capture(error: error, scope: .init(scope: scope))
+
+      sentry.capture(error: error, scope: .init(scope: scope))
     #else
-    self.sentry.capture(event: .init(error: error), configureScope: scope.configure)
+      sentry.capture(event: .init(error: error), configureScope: scope.configure)
     #endif
   }
-  
 
 //
 //  func captureEvent(

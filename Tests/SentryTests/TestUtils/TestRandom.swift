@@ -1,14 +1,13 @@
 import Foundation
 
 class TestRandom: SentryRandomProtocol {
+  var value: Double
 
-    var value: Double
-    
-    init(value: Double) {
-        self.value = value
-    }
-    
-    func nextNumber() -> Double {
-        return value
-    }
+  init(value: Double) {
+    self.value = value
+  }
+
+  func nextNumber() -> Double {
+    value
+  }
 }
