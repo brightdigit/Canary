@@ -118,6 +118,10 @@ import Foundation
 //  - (instancetype)initWithError:(NSError *)error;
 // }
 
+public protocol ConfigurableScope {
+  func setTag(value: String, key: String)
+}
+
 public struct CanaryOptions {
   public init(dsn: String) {
     self.dsn = dsn
@@ -145,6 +149,10 @@ public struct CanaryClient {
         newOptions.dsn = options.dsn
       }
     #endif
+  }
+
+  public func configureScope(_ callback: @escaping (ConfigurableScope) -> Void) {
+    sentry.configureScope(callback)
   }
 
   public func captureError(_ error: Error, withScope scope: Scope) {

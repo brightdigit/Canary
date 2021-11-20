@@ -5,7 +5,7 @@
   typealias SentryCocoaScope = Sentry.Scope
   typealias SentryCocoaSDK = Sentry.SentrySDK
 
-  extension SentryCocoaScope {
+  extension SentryCocoaScope: ConfigurableScope {
     convenience init(scope: Scope) {
       self.init()
       self.setTags(scope.tags)
