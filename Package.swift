@@ -15,23 +15,21 @@ let package = Package(
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "Canary",
-            targets: ["Canary"]),
-        .library(
-            name: "SentryCocoa",
-            targets: ["SentryCocoa"]),
+            targets: ["Canary"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         
       .package(url: "https://github.com/brightdigit/Prch.git", from: "0.1.1"),
-      .package(name: "PLCrashReporter", url: "https://github.com/microsoft/plcrashreporter.git", from: "1.10.0")
+      .package(name: "PLCrashReporter", url: "https://github.com/microsoft/plcrashreporter.git", from: "1.10.0"),
+      .package(name: "Sentry", url: "https://github.com/getsentry/sentry-cocoa.git", from: "7.5.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "Canary",
-            dependencies: ["Prch", "SentryVanilla", "SentryCocoa"]),
+            dependencies: ["Prch", "SentryVanilla", "Sentry"]),
         .testTarget(
             name: "CanaryTests",
             dependencies: ["Canary"]),
@@ -42,31 +40,6 @@ let package = Package(
                     name: "CrashReporter",
                     package: "PLCrashReporter",
                     condition: .when(platforms: [.macOS, .iOS,  .tvOS])),
-            ]),
-        .target(
-            name: "SentryCocoa",
-            path: "Sources",
-            sources: [
-                "Sentry/",
-                "SentryCrash/"
-            ],
-            publicHeadersPath: "Sentry/Public/",
-            cxxSettings: [
-                .define("GCC_ENABLE_CPP_EXCEPTIONS", to: "YES"),
-                .headerSearchPath("Sentry/include"),
-                .headerSearchPath("Sentry/Public"),
-                .headerSearchPath("SentryCrash/Installations"),
-                .headerSearchPath("SentryCrash/Recording"),
-                .headerSearchPath("SentryCrash/Recording/Monitors"),
-                .headerSearchPath("SentryCrash/Recording/Tools"),
-                .headerSearchPath("SentryCrash/Reporting/Filters"),
-                .headerSearchPath("SentryCrash/Reporting/Filters/Tools"),
-                .headerSearchPath("SentryCrash/Reporting/Tools")
-            ],
-            linkerSettings: [
-                .linkedLibrary("z"),
-                .linkedLibrary("c++")
-            ]
-        )
+            ])
     ]
 )

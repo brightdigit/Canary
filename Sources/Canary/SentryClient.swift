@@ -6,68 +6,11 @@
 //
 
 import Foundation
-#if canImport(SentryCocoa)
-import SentryCocoa
-#endif
-
-import SentryVanilla
-
-public struct Scope {
-  public init(tags: [String : String]) {
-    self.tags = tags
-  }
-  
-  public let tags : [String: String]
-  
-  
-}
-
-extension Scope {
-  func configure(_ scope: inout SentryVanilla.Scope) {
-    scope.tags = self.tags
-  }
-}
-
-#if canImport(SentryCocoa)
-extension SentryCocoa.Scope {
-  convenience init(scope: Scope) {
-    self.init()
-    self.setTags(scope.tags)
-  }
-}
-#endif
 
 
-extension SentryVanilla.SentryEvent {
-  init(error: Error) {
-    self.init(message: error.localizedDescription)
-//    self = [self initWithLevel:kSentryLevelError];
-//    self.error = error;
-//    return self;
-    //    NSString *exceptionValue = [NSString stringWithFormat:@"Code: %ld", (long)error.code];
-    //    SentryException *exception = [[SentryException alloc] initWithValue:exceptionValue
-    //                                                                   type:error.domain];
-    //
-    //    // Sentry uses the error domain and code on the mechanism for gouping
-    //    SentryMechanism *mechanism = [[SentryMechanism alloc] initWithType:@"NSError"];
-    //    SentryMechanismMeta *mechanismMeta = [[SentryMechanismMeta alloc] init];
-    //    mechanismMeta.error = [[SentryNSError alloc] initWithDomain:error.domain code:error.code];
-    //    mechanism.meta = mechanismMeta;
-    //    // The description of the error can be especially useful for error from swift that
-    //    // use a simple enum.
-    //    mechanism.desc = error.description;
-    //
-    //    NSDictionary<NSString *, id> *userInfo = [error.userInfo sentry_sanitize];
-    //    mechanism.data = userInfo;
-    //    exception.mechanism = mechanism;
-    //    event.exceptions = @[ exception ];
-    //
-    //    // Once the UI displays the mechanism data we can the userInfo from the event.context.
-    //    [self setUserInfo:userInfo withEvent:event];
-    //
-    //    return event;
-  }
-}
+
+
+
 
 //- (SentryEvent *)buildErrorEvent:(NSError *)error
 //{
@@ -199,14 +142,14 @@ public struct CanaryClient {
   }
   
   
-  #if canImport(SentryCocoa)
-  let sentry = SentryCocoa.SentrySDK.self
+  #if canImport(Sentry)
+  let sentry = SentryCocoaSDK.self
   #else
-  let sentry = SentryVanilla.Sentry.self
+  let sentry = SentryVanillaSDK.self
   #endif
 
   public func start(withOptions options: CanaryOptions) throws {
-    #if canImport(SentryCocoa)
+    #if canImport(Sentry)
     sentry.start { newOptions in
       newOptions.dsn = options.dsn
     }
@@ -219,7 +162,8 @@ public struct CanaryClient {
   }
   
   public func captureError(_ error: Error, withScope scope: Scope) {
-    #if canImport(SentryCocoa)
+    #if canImport(Sentry)
+    
     self.sentry.capture(error: error, scope: .init(scope: scope))
     #else
     self.sentry.capture(event: .init(error: error), configureScope: scope.configure)

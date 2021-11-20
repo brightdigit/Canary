@@ -18,6 +18,15 @@
           "revision": "0bfc77657088fdacc995c0368a767c2ba18b94f2",
           "version": "0.1.1"
         }
+      },
+      {
+        "package": "Sentry",
+        "repositoryURL": "https://github.com/getsentry/sentry-cocoa.git",
+        "state": {
+          "branch": null,
+          "revision": "0510982c2df41baa5a662f4ce5f83488661fdd48",
+          "version": "7.5.2"
+        }
       }
     ]
   },
