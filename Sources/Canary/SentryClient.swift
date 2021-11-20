@@ -155,12 +155,11 @@ public struct CanaryClient {
     sentry.configureScope(callback)
   }
 
-  public func captureError(_ error: Error, withScope scope: Scope) {
+  public func captureError(_ error: Error, configureScope: @escaping (ConfigurableScope) -> Void) {
     #if canImport(Sentry)
-
-      sentry.capture(error: error, scope: .init(scope: scope))
+      sentry.capture(error: error, block: configureScope)
     #else
-      sentry.capture(event: .init(error: error), configureScope: scope.configure)
+      sentry.capture(event: .init(error: error), configureScope: configureScope)
     #endif
   }
 
