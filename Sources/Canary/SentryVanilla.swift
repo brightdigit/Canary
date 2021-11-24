@@ -5,9 +5,15 @@ import enum SentryVanilla.Sentry
 import struct SentryVanilla.SentryEvent
 typealias SentryVanillaScope = SentryVanilla.Scope
 typealias SentryVanillaSDK = SentryVanilla.Sentry
+typealias SentryVanillaEvent = SentryVanilla.SentryEvent
 
-extension SentryVanilla.SentryEvent {
-  init(error: Error) {
+extension SentryVanillaEvent {
+  init(event: CanaryEvent) {
+    var tags = event.tags ?? [String : String]()
+    tags["logger"] = event.logger
+    self.init(message: event.message, tags: tags)
+  }
+  init(error: Error) {    
     self.init(message: error.localizedDescription)
 //    self = [self initWithLevel:kSentryLevelError];
 //    self.error = error;
