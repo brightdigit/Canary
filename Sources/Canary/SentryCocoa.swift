@@ -1,3 +1,4 @@
+import Logging
 public enum CanaryLevel {
   /// Appropriate for messages that contain information normally of use only when
   /// tracing the execution of a program.
@@ -29,16 +30,44 @@ public enum CanaryLevel {
   /// debugging.
   case critical
 }
+
+public extension CanaryLevel {
+  init(level: Logger.Level) {
+    switch level {
+    case .trace:
+      self = .trace
+
+    case .debug:
+      self = .debug
+
+    case .info:
+      self = .info
+
+    case .notice:
+      self = .notice
+
+    case .warning:
+      self = .warning
+
+    case .error:
+      self = .error
+
+    case .critical:
+      self = .critical
+    }
+  }
+}
+
 #if canImport(Sentry)
-  import class Sentry.Scope
-  import class Sentry.SentrySDK
   import class Sentry.Event
-import enum Sentry.SentryLevel
+  import class Sentry.Scope
+  import enum Sentry.SentryLevel
+  import class Sentry.SentrySDK
 
   typealias SentryCocoaScope = Sentry.Scope
   typealias SentryCocoaSDK = Sentry.SentrySDK
   typealias SentryCocoaEvent = Sentry.Event
-typealias SentryCocoaLevel = Sentry.SentryLevel
+  typealias SentryCocoaLevel = Sentry.SentryLevel
 
   extension SentryCocoaScope: ConfigurableScope {
     convenience init(scope: Scope) {
@@ -46,50 +75,57 @@ typealias SentryCocoaLevel = Sentry.SentryLevel
       self.setTags(scope.tags)
     }
   }
-extension SentryCocoaLevel {
-  init(level: CanaryLevel) {
-    switch level {
-    case .trace:
-      self = .debug
-    case .debug:
-      self = .debug
-    case .info:
-      self = .info
-    case .notice:
-      self = .info
-    case .warning:
-      self = .warning
-    case .error:
-      self = .error
-    case .critical:
-      self = .fatal
+
+  public extension SentryCocoaLevel {
+    init(level: CanaryLevel) {
+      switch level {
+      case .trace:
+        self = .debug
+
+      case .debug:
+        self = .debug
+
+      case .info:
+        self = .info
+
+      case .notice:
+        self = .info
+
+      case .warning:
+        self = .warning
+
+      case .error:
+        self = .error
+
+      case .critical:
+        self = .fatal
+      }
     }
   }
-}
 
-extension SentryCocoaEvent {
-  convenience init(event: CanaryEvent) {
-    self.init()
-    self.level = .init(level: event.level)
-    self.logger = event.logger
-    self.error = event.error
+  extension SentryCocoaEvent {
+    convenience init(event: CanaryEvent) {
+      self.init()
+      self.level = .init(level: event.level)
+      self.logger = event.logger
+      self.error = event.error
 //    self.breadcrumbs
 //    self.context
 //    self.debugMeta
 //    self.dist
-    self.environment = event.environment
+      self.environment = event.environment
 //    self.exceptions
 //    self.fingerprint
-    self.message = .init(formatted: event.message)
+      self.message = .init(formatted: event.message)
 //    self.modules
 //    self.releaseName
 //    self.startTimestamp
 //    self.serverName
 //    self.threads
 //    self.user
-    self.tags = event.tags
+      self.tags = event.tags
 //    self.timestamp
-    self.type = event.type
+      self.type = event.type
+    }
   }
-}
 #endif

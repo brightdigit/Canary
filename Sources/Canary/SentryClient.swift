@@ -132,13 +132,13 @@ public struct CanaryOptions {
 }
 
 public protocol CanaryEvent {
-  var level : CanaryLevel { get }
-  var logger : String? { get }
+  var level: CanaryLevel { get }
+  var logger: String? { get }
   var error: Error? { get }
-  var environment : String? { get }
-  var tags : [ String : String]? { get }
-  var type : String? { get }
-  var message : String { get }
+  var environment: String? { get }
+  var tags: [String: String]? { get }
+  var type: String? { get }
+  var message: String { get }
 }
 
 public struct CanaryClient {
@@ -173,12 +173,15 @@ public struct CanaryClient {
       sentry.capture(event: .init(error: error), configureScope: configureScope)
     #endif
   }
-  
-  
+
   public func captureEvent(_ event: CanaryEvent, configureScope: @escaping (ConfigurableScope) -> Void) {
-    
-    
-   // SentryEvent(message: <#T##String?#>, tags: <#T##[String : String]?#>)
+    #if canImport(Sentry)
+      sentry.capture(event: SentryCocoaEvent(event: event), block: configureScope)
+    #else
+      sentry.capture(event: SentryVanillaEvent(event: event), block: configureScope)
+    #endif
+
+    // SentryEvent(message: <#T##String?#>, tags: <#T##[String : String]?#>)
   }
 
 //
