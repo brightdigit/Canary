@@ -52,7 +52,7 @@ jobs:
     strategy:
       matrix:
         runs-on: [macos-11, macos-10.15]
-        xcode: ["/Applications/Xcode_12.4.app", "/Applications/Xcode_11.7.app"]
+        xcode: ["/Applications/Xcode_12.4.app"]
         include:
           - runs-on: macos-11
             xcode: "/Applications/Xcode_13.1.app"
