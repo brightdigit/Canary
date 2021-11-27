@@ -1,4 +1,4 @@
-#if os(macOS)
+#if !os(Linux)
   import Cocoa
   import Darwin
 

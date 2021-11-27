@@ -7,7 +7,7 @@ public enum Sentry {
     var options = SentryOptions()
     configure(&options)
 
-    #if os(macOS)
+    #if !os(Linux)
       options.add(integration: MacOSIntegration())
     #elseif os(iOS)
       options.add(integration: IOSIntegration())
@@ -25,7 +25,7 @@ public enum Sentry {
       // throw PlatformNotSupported
     #endif
 
-    #if os(macOS) || os(iOS) || os(tvOS)
+    #if !os(Linux) || os(iOS) || os(tvOS)
       options.add(integration: PLCrashReporterIntegration())
     #endif
 

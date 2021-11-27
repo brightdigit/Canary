@@ -12,7 +12,7 @@ class TestNotificationCenter {
     private static let didEnterBackgroundNotification = UIApplication.didEnterBackgroundNotification
     private static let willTerminateNotification = UIApplication.willTerminateNotification
     private static let didFinishLaunchingNotification = UIApplication.didFinishLaunchingNotification
-  #elseif os(macOS)
+  #elseif !os(Linux)
     private static let didBecomeActiveNotification = NSApplication.didBecomeActiveNotification
     private static let willResignActiveNotification = NSApplication.willResignActiveNotification
     private static let willTerminateNotification = NSApplication.willTerminateNotification
@@ -26,13 +26,13 @@ class TestNotificationCenter {
   }
 
   static func didBecomeActive() {
-    #if os(tvOS) || os(iOS) || os(macOS)
+    #if os(tvOS) || os(iOS) || !os(Linux)
       NotificationCenter.default.post(Notification(name: didBecomeActiveNotification))
     #endif
   }
 
   static func willResignActive() {
-    #if os(tvOS) || os(iOS) || os(macOS)
+    #if os(tvOS) || os(iOS) || !os(Linux)
       NotificationCenter.default.post(Notification(name: willResignActiveNotification))
     #endif
   }
@@ -44,7 +44,7 @@ class TestNotificationCenter {
   }
 
   static func willTerminate() {
-    #if os(tvOS) || os(iOS) || os(macOS)
+    #if os(tvOS) || os(iOS) || !os(Linux)
       NotificationCenter.default.post(Notification(name: willTerminateNotification))
     #endif
   }
@@ -54,7 +54,7 @@ class TestNotificationCenter {
   }
 
   static func didFinishLaunching() {
-    #if os(tvOS) || os(iOS) || os(macOS)
+    #if os(tvOS) || os(iOS) || !os(Linux)
       NotificationCenter.default.post(Notification(name: didFinishLaunchingNotification))
     #endif
   }

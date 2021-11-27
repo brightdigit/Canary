@@ -262,7 +262,7 @@ class SentryCrashIntegrationTests: XCTestCase {
       return
     }
 
-    #if targetEnvironment(macCatalyst) || os(macOS)
+    #if targetEnvironment(macCatalyst) || !os(Linux)
       XCTAssertEqual("macOS", device["family"] as? String)
       XCTAssertEqual("macOS", os["name"] as? String)
 
