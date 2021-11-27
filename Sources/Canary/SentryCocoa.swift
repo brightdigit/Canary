@@ -30,34 +30,6 @@ public enum CanaryLevel {
   case critical
 }
 
-//
-// public extension CanaryLevel {
-//  init(level: Logger.Level) {
-//    switch level {
-//    case .trace:
-//      self = .trace
-//
-//    case .debug:
-//      self = .debug
-//
-//    case .info:
-//      self = .info
-//
-//    case .notice:
-//      self = .notice
-//
-//    case .warning:
-//      self = .warning
-//
-//    case .error:
-//      self = .error
-//
-//    case .critical:
-//      self = .critical
-//    }
-//  }
-// }
-
 #if canImport(Sentry) && !os(Linux)
   import class Sentry.Event
   import class Sentry.Scope
