@@ -1,4 +1,4 @@
-#if !os(Linux)
+#if os(macOS) && canImport(Cocoa)
   import Cocoa
   import Darwin
 
