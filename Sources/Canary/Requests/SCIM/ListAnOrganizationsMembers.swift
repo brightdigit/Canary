@@ -6,7 +6,7 @@ public extension SCIM {
   enum ListAnOrganizationsMembers {
     public static let service = APIService<Response>(id: "List an Organization's Members", tag: "SCIM", method: "GET", path: "/api/0/organizations/{organization_slug}/scim/v2/Users", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["member:read"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization. */
         public var organizationSlug: String
@@ -61,6 +61,13 @@ public extension SCIM {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Returns a paginated list of members bound to a organization with a SCIM Users GET Request. */
       public struct Status200: Model {
         public var totalResults: Int

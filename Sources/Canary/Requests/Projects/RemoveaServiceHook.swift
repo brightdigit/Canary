@@ -6,7 +6,7 @@ public extension Projects {
   enum RemoveaServiceHook {
     public static let service = APIService<Response>(id: "Remove a Service Hook", tag: "Projects", method: "DELETE", path: "/api/0/projects/{organization_slug}/{project_slug}/hooks/{hook_id}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:admin"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization the client keys belong to. */
         public var organizationSlug: String
@@ -43,6 +43,13 @@ public extension Projects {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       public typealias SuccessType = Void
 
       /** Success */

@@ -6,7 +6,7 @@ public extension Teams {
   enum CreateaNewTeam {
     public static let service = APIService<Response>(id: "Create a New Team", tag: "Teams", method: "POST", path: "/api/0/organizations/{organization_slug}/teams/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:write"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       /** Create a new team bound to an organization. Only the name of the team is needed to create it, the slug can be auto generated. */
       public struct Body: Model {
         /** The name of the team. */
@@ -68,6 +68,13 @@ public extension Teams {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Create a new team bound to an organization. Only the name of the team is needed to create it, the slug can be auto generated. */
       public struct Status201: Model {
         public var avatar: Avatar

@@ -27,9 +27,7 @@ class Invocation: Loggable {
     returnTypeString != "v"
   }
 
-  lazy var returnedObject: AnyObject? = {
-    returnedObjectValue()
-  }()
+  lazy var returnedObject: AnyObject? = returnedObjectValue()
 
   private(set) var isInvoked: Bool = false
 

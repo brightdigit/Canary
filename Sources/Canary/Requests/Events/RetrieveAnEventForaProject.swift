@@ -7,7 +7,7 @@ import Prch
     enum RetrieveAnEventForaProject {
       public static let service = APIService<Response>(id: "Retrieve an Event for a Project", tag: "Events", method: "GET", path: "/api/0/projects/{organization_slug}/{project_slug}/events/{event_id}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
 
-      public final class Request: APIRequest<Response> {
+      public final class Request: APIRequest<Response, CanaryAPI> {
         public struct Options {
           /** The slug of the organization the event belongs to. */
           public var organizationSlug: String
@@ -44,6 +44,13 @@ import Prch
       }
 
       public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+        public var failure: FailureType? {
+          successful ? nil : ()
+        }
+
+        public typealias FailureType = Void
+
+        public typealias APIType = CanaryAPI
         /** Return details on an individual event. */
         public struct Status200: Model {
           public var eventID: String

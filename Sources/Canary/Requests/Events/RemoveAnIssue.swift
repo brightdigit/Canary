@@ -6,7 +6,7 @@ public extension Events {
   enum RemoveAnIssue {
     public static let service = APIService<Response>(id: "Remove an Issue", tag: "Events", method: "DELETE", path: "/api/0/issues/{issue_id}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:admin"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       public struct Options {
         /** The ID of the issue to delete. */
         public var issueId: String
@@ -35,6 +35,13 @@ public extension Events {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       public typealias SuccessType = Void
 
       /** Success */

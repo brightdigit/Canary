@@ -7,7 +7,7 @@ import Prch
     enum RetrieveTheOldestEventForAnIssue {
       public static let service = APIService<Response>(id: "Retrieve the Oldest Event for an Issue", tag: "Events", method: "GET", path: "/api/0/issues/{issue_id}/events/oldest/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:read"])])
 
-      public final class Request: APIRequest<Response> {
+      public final class Request: APIRequest<Response, CanaryAPI> {
         public struct Options {
           /** The ID of the issue. */
           public var issueId: String
@@ -36,6 +36,13 @@ import Prch
       }
 
       public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+        public var failure: FailureType? {
+          successful ? nil : ()
+        }
+
+        public typealias FailureType = Void
+
+        public typealias APIType = CanaryAPI
         /** Retrieves the details of the oldest event for an issue. */
         public struct Status200: Model {
           public var eventID: String

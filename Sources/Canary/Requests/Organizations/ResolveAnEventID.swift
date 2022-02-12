@@ -7,7 +7,7 @@ import Prch
     enum ResolveAnEventID {
       public static let service = APIService<Response>(id: "Resolve an Event ID", tag: "Organizations", method: "GET", path: "/api/0/organizations/{organization_slug}/eventids/{event_id}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
 
-      public final class Request: APIRequest<Response> {
+      public final class Request: APIRequest<Response, CanaryAPI> {
         public struct Options {
           /** The slug of the organization the event ID should be looked up in. */
           public var organizationSlug: String
@@ -40,6 +40,13 @@ import Prch
       }
 
       public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+        public var failure: FailureType? {
+          successful ? nil : ()
+        }
+
+        public typealias FailureType = Void
+
+        public typealias APIType = CanaryAPI
         /** This resolves an event ID to the project slug and internal issue ID and internal event ID. */
         public struct Status200: Model {
           public var event: Event

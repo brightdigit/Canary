@@ -6,7 +6,7 @@ public extension Projects {
   enum ListaProjectsUserFeedback {
     public static let service = APIService<Response>(id: "List a Project's User Feedback", tag: "Projects", method: "GET", path: "/api/0/projects/{organization_slug}/{project_slug}/user-feedback/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization. */
         public var organizationSlug: String
@@ -39,6 +39,13 @@ public extension Projects {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Return a list of user feedback items within this project. */
       public struct Status200: Model {
         public var comments: String

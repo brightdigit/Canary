@@ -8,7 +8,7 @@ public extension Events {
   enum BulkRemoveaListOfIssues {
     public static let service = APIService<Response>(id: "Bulk Remove a List of Issues", tag: "Events", method: "DELETE", path: "/api/0/projects/{organization_slug}/{project_slug}/issues/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:admin"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization the issues belong to. */
         public var organizationSlug: String
@@ -53,6 +53,13 @@ public extension Events {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       public typealias SuccessType = Void
 
       /** Success */

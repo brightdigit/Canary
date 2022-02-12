@@ -6,7 +6,7 @@ public extension Projects {
   enum ListYourProjects {
     public static let service = APIService<Response>(id: "List Your Projects", tag: "Projects", method: "GET", path: "/api/0/projects/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       public struct Options {
         /** A pointer to the last object fetched and its' sort order; used to retrieve the next or previous results. */
         public var cursor: String?
@@ -39,6 +39,13 @@ public extension Projects {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Return a list of projects available to the authenticated session. */
       public struct Status200: Model {
         /** Return a list of projects available to the authenticated session. */

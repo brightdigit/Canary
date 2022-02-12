@@ -6,7 +6,7 @@ public extension Organizations {
   enum UpdateAnOrganization {
     public static let service = APIService<Response>(id: "Update an Organization", tag: "Organizations", method: "PUT", path: "/api/0/organizations/{organization_slug}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org:write"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       /** Update various attributes and configurable settings for the given organization. */
       public struct Body: Model {
         /** An optional new name for the organization. */
@@ -68,6 +68,13 @@ public extension Organizations {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Update various attributes and configurable settings for the given organization. */
       public struct Status200: Model {
         public var access: [String]

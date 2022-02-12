@@ -13,7 +13,7 @@ public extension Events {
   enum BulkMutateaListOfIssues {
     public static let service = APIService<Response>(id: "Bulk Mutate a List of Issues", tag: "Events", method: "PUT", path: "/api/0/projects/{organization_slug}/{project_slug}/issues/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       /** Bulk mutate various attributes on issues.  The list of issues to modify is given through the `id` query parameter.  It is repeated for each issue that should be modified.
        - For non-status updates, the `id` query parameter is required.
        - For status updates, the `id` query parameter may be omitted
@@ -197,6 +197,13 @@ public extension Events {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Bulk mutate various attributes on issues.  The list of issues to modify is given through the `id` query parameter.  It is repeated for each issue that should be modified.
        - For non-status updates, the `id` query parameter is required.
        - For status updates, the `id` query parameter may be omitted

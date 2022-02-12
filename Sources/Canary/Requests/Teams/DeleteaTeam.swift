@@ -7,7 +7,7 @@ public extension Teams {
   enum DeleteaTeam {
     public static let service = APIService<Response>(id: "Delete a Team", tag: "Teams", method: "DELETE", path: "/api/0/teams/{organization_slug}/{team_slug}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:admin"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization the team belongs to. */
         public var organizationSlug: String
@@ -40,6 +40,13 @@ public extension Teams {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       public typealias SuccessType = Void
 
       /** Success */

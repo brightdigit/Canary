@@ -53,7 +53,7 @@ public extension SCIM {
   enum UpdateaTeamsAttributes {
     public static let service = APIService<Response>(id: "Update a Team's Attributes", tag: "SCIM", method: "PATCH", path: "/api/0/organizations/{organization_slug}/scim/v2/Groups/{team_id}", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:write"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       /** Update a team's attributes with a SCIM Group PATCH Request. Valid Operations are:
        * Renaming a team:
        ```json
@@ -159,6 +159,13 @@ public extension SCIM {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       public typealias SuccessType = Void
 
       /** Success */

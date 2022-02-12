@@ -6,7 +6,7 @@ public extension Integration {
   enum ListAnOrganizationsIntegrationPlatformInstallations {
     public static let service = APIService<Response>(id: "List an Organization's Integration Platform Installations", tag: "Integration", method: "GET", path: "/api/0/organizations/{organization_slug}/sentry-app-installations/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org:read", "org:integrations"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       public struct Options {
         /** The organization short name. */
         public var organizationSlug: String
@@ -35,6 +35,13 @@ public extension Integration {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Return a list of integration platform installations for a given organization. */
       public struct Status200: Model {
         public var app: App

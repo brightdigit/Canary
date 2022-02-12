@@ -9,7 +9,7 @@ public extension Projects {
   enum ListaTagsValues {
     public static let service = APIService<Response>(id: "List a Tag's Values", tag: "Projects", method: "GET", path: "/api/0/projects/{organization_slug}/{project_slug}/tags/{key}/values/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization. */
         public var organizationSlug: String
@@ -46,6 +46,13 @@ public extension Projects {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Return a list of values associated with this key.  The `query`
        parameter can be used to to perform a "contains" match on
        values.

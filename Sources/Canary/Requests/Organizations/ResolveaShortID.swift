@@ -6,7 +6,7 @@ public extension Organizations {
   enum ResolveaShortID {
     public static let service = APIService<Response>(id: "Resolve a Short ID", tag: "Organizations", method: "GET", path: "/api/0/organizations/{organization_slug}/shortids/{short_id}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization the short ID should be looked up in. */
         public var organizationSlug: String
@@ -39,6 +39,13 @@ public extension Organizations {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** This resolves a short ID to the project slug and internal issue ID. */
       public struct Status200: Model {
         public var organizationSlug: String

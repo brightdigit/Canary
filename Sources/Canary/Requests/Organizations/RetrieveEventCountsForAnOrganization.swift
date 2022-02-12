@@ -25,7 +25,7 @@ public extension Organizations {
       case _1d = "1d"
     }
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization the event ID should be looked up in. */
         public var organizationSlug: String
@@ -73,10 +73,10 @@ public extension Organizations {
         if let stat = options.stat?.encode() {
           params["stat"] = stat
         }
-        if let since = options.since?.encode() {
+        if let since = options.since?.encode(with: CanaryAPI.dateEncodingFormatter) {
           params["since"] = since
         }
-        if let until = options.until?.encode() {
+        if let until = options.until?.encode(with: CanaryAPI.dateEncodingFormatter) {
           params["until"] = until
         }
         if let resolution = options.resolution?.encode() {
@@ -87,6 +87,13 @@ public extension Organizations {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       public typealias SuccessType = [[Int]]
 
       /** Success */

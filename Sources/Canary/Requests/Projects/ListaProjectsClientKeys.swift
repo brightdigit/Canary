@@ -6,7 +6,7 @@ public extension Projects {
   enum ListaProjectsClientKeys {
     public static let service = APIService<Response>(id: "List a Project's Client Keys", tag: "Projects", method: "GET", path: "/api/0/projects/{organization_slug}/{project_slug}/keys/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization the client keys belong to. */
         public var organizationSlug: String
@@ -51,6 +51,13 @@ public extension Projects {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Return a list of client keys bound to a project. */
       public struct Status200: Model {
         public var browserSdk: BrowserSdk

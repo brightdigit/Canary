@@ -6,7 +6,7 @@ public extension Releases {
   enum UpdateAnOrganizationsRelease {
     public static let service = APIService<Response>(id: "Update an Organization's Release", tag: "Releases", method: "PUT", path: "/api/0/organizations/{organization_slug}/releases/{version}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       /** Update a release for a given organization. */
       public struct Body: Model {
         /** An optional list of commit data to be associated with the release. Commits must include parameters `id` (the sha of the commit), and can optionally include `repository`, `message`, `author_name`, `author_email`, and `timestamp`. */
@@ -90,6 +90,13 @@ public extension Releases {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Update a release for a given organization. */
       public struct Status200: Model {
         public var authors: [[String: AnyCodable]]
