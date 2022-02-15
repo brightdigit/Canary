@@ -22,12 +22,12 @@ let package = Package(
     .package(url: "https://github.com/brightdigit/Prch.git", from: "0.2.0-beta.1"),
     .package(name: "PLCrashReporter", url: "https://github.com/microsoft/plcrashreporter.git", from: "1.10.0"),
     .package(name: "Sentry", url: "https://github.com/getsentry/sentry-cocoa.git", from: "7.5.0"),
-    .package(url: "https://github.com/shibapm/Komondor", from: "1.1.2"), // dev
-    .package(url: "https://github.com/shibapm/PackageConfig.git", from: "1.1.2"), // dev
-    .package(url: "https://github.com/nicklockwood/SwiftFormat", from: "0.47.0"), // dev
-    .package(url: "https://github.com/realm/SwiftLint", from: "0.43.0"), // dev
-    .package(url: "https://github.com/shibapm/Rocket.git", from: "1.2.0"), // dev
-    .package(url: "https://github.com/brightdigit/swift-test-codecov", from: "1.0.0") // dev
+//    .package(url: "https://github.com/shibapm/Komondor", from: "1.1.2"), // dev
+//    .package(url: "https://github.com/shibapm/PackageConfig.git", from: "1.1.2"), // dev
+//    .package(url: "https://github.com/nicklockwood/SwiftFormat", from: "0.47.0"), // dev
+//    .package(url: "https://github.com/realm/SwiftLint", from: "0.43.0"), // dev
+//    .package(url: "https://github.com/shibapm/Rocket.git", from: "1.2.0"), // dev
+//    .package(url: "https://github.com/brightdigit/swift-test-codecov", from: "1.0.0") // dev
   ],
   targets: [
     .target(
