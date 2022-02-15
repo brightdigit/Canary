@@ -6,7 +6,7 @@ public extension Projects {
   enum UpdateaClientKey {
     public static let service = APIService<Response>(id: "Update a Client Key", tag: "Projects", method: "PUT", path: "/api/0/projects/{organization_slug}/{project_slug}/keys/{key_id}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       /** Update a client key.  This can be used to rename a key. */
       public struct Body: Model {
         /** The new name for the client key. */
@@ -70,6 +70,13 @@ public extension Projects {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Update a client key.  This can be used to rename a key. */
       public struct Status200: Model {
         public var browserSdk: BrowserSdk

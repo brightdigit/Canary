@@ -6,7 +6,7 @@ public extension Events {
   enum ListaProjectsEvents {
     public static let service = APIService<Response>(id: "List a Project's Events", tag: "Events", method: "GET", path: "/api/0/projects/{organization_slug}/{project_slug}/events/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization the groups belong to. */
         public var organizationSlug: String
@@ -59,6 +59,13 @@ public extension Events {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Return a list of events bound to a project. */
       public struct Status200: Model {
         public var eventID: String

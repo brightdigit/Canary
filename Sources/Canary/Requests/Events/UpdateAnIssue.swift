@@ -6,7 +6,7 @@ public extension Events {
   enum UpdateAnIssue {
     public static let service = APIService<Response>(id: "Update an Issue", tag: "Events", method: "PUT", path: "/api/0/issues/{issue_id}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:write"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       /** Updates an individual issue's attributes.  Only the attributes submitted are modified. */
       public struct Body: Model {
         /** The actor id (or username) of the user or team that should be assigned to this issue. */
@@ -91,6 +91,13 @@ public extension Events {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Updates an individual issue's attributes.  Only the attributes submitted are modified. */
       public struct Status200: Model {
         /** Updates an individual issue's attributes.  Only the attributes submitted are modified. */

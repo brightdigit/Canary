@@ -6,7 +6,7 @@ public extension Releases {
   enum UpdateaProjectReleaseFile {
     public static let service = APIService<Response>(id: "Update a Project Release File", tag: "Releases", method: "PUT", path: "/api/0/projects/{organization_slug}/{project_slug}/releases/{version}/files/{file_id}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       /** Update a project release file. */
       public struct Body: Model {
         /** The new name of the dist. */
@@ -80,6 +80,13 @@ public extension Releases {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Update a project release file. */
       public struct Status200: Model {
         public var sha1: String

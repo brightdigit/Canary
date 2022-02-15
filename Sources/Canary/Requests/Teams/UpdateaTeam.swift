@@ -6,7 +6,7 @@ public extension Teams {
   enum UpdateaTeam {
     public static let service = APIService<Response>(id: "Update a Team", tag: "Teams", method: "PUT", path: "/api/0/teams/{organization_slug}/{team_slug}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:write"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       /** Update various attributes and configurable settings for the given team. */
       public struct Body: Model {
         /** The new name for the team. */
@@ -72,6 +72,13 @@ public extension Teams {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Update various attributes and configurable settings for the given team. */
       public struct Status200: Model {
         public var avatar: Avatar

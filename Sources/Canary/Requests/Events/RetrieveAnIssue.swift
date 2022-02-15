@@ -12,7 +12,7 @@ public extension Events {
   enum RetrieveAnIssue {
     public static let service = APIService<Response>(id: "Retrieve an Issue", tag: "Events", method: "GET", path: "/api/0/issues/{issue_id}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:read"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       public struct Options {
         /** The ID of the issue to retrieve. */
         public var issueId: String
@@ -41,6 +41,13 @@ public extension Events {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Return details on an individual issue. This returns the basic stats for the issue (title, last seen, first seen), some overall numbers (number of comments, user reports) as well as the summarized event data. */
       public struct Status200: Model {
         /** Return details on an individual issue. This returns the basic stats for the issue (title, last seen, first seen), some overall numbers (number of comments, user reports) as well as the summarized event data. */

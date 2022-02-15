@@ -6,7 +6,7 @@ public extension Releases {
   enum DeleteAnOrganizationReleasesFile {
     public static let service = APIService<Response>(id: "Delete an Organization Release's File", tag: "Releases", method: "DELETE", path: "/api/0/organizations/{organization_slug}/releases/{version}/files/{file_id}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization the release belongs to. */
         public var organizationSlug: String
@@ -43,6 +43,13 @@ public extension Releases {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       public typealias SuccessType = Void
 
       /** Success */

@@ -6,7 +6,7 @@ public extension Organizations {
   enum RetrieveAnOrganization {
     public static let service = APIService<Response>(id: "Retrieve an Organization", tag: "Organizations", method: "GET", path: "/api/0/organizations/{organization_slug}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization to look up. */
         public var organizationSlug: String
@@ -35,6 +35,13 @@ public extension Organizations {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Return details on an individual organization including various details such as membership access, features, and teams. */
       public struct Status200: Model {
         public var access: [String]

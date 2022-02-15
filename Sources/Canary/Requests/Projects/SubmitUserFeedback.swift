@@ -10,7 +10,7 @@ public extension Projects {
   enum SubmitUserFeedback {
     public static let service = APIService<Response>(id: "Submit User Feedback", tag: "Projects", method: "POST", path: "/api/0/projects/{organization_slug}/{project_slug}/user-feedback/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"]), SecurityRequirement(type: "dsn", scopes: [])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       /** Submit and associate user feedback with an issue.
        Feedback must be received by the server no more than 30 minutes after the event was saved.
        Additionally, within 5 minutes of submitting feedback it may also be overwritten. This is useful in situations where you may need to retry sending a request due to network failures.
@@ -92,6 +92,13 @@ public extension Projects {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Submit and associate user feedback with an issue.
        Feedback must be received by the server no more than 30 minutes after the event was saved.
        Additionally, within 5 minutes of submitting feedback it may also be overwritten. This is useful in situations where you may need to retry sending a request due to network failures.

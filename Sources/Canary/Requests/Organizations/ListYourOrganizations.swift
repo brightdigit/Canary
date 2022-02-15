@@ -6,7 +6,7 @@ public extension Organizations {
   enum ListYourOrganizations {
     public static let service = APIService<Response>(id: "List Your Organizations", tag: "Organizations", method: "GET", path: "/api/0/organizations/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       public struct Options {
         /** Restrict results to organizations in which you are an organization owner. */
         public var owner: Bool?
@@ -46,6 +46,13 @@ public extension Organizations {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Return a list of organizations available to the authenticated session.  This is particularly useful for requests with an user bound context.  For API key based requests this will only return the organization that belongs to the key. */
       public struct Status200: Model {
         public var avatar: Avatar

@@ -11,7 +11,7 @@ public extension Releases {
   enum CreateaNewReleaseForAnOrganization {
     public static let service = APIService<Response>(id: "Create a New Release for an Organization", tag: "Releases", method: "POST", path: "/api/0/organizations/{organization_slug}/releases/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       /** Create a new release for the given organization.  Releases are used by
        Sentry to improve its error reporting abilities by correlating
        first seen events with the release that might have introduced the
@@ -250,6 +250,13 @@ public extension Releases {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Create a new release for the given organization.  Releases are used by
        Sentry to improve its error reporting abilities by correlating
        first seen events with the release that might have introduced the

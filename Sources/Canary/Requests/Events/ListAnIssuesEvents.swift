@@ -6,7 +6,7 @@ public extension Events {
   enum ListAnIssuesEvents {
     public static let service = APIService<Response>(id: "List an Issue's Events", tag: "Events", method: "GET", path: "/api/0/issues/{issue_id}/events/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:read"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       public struct Options {
         /** The ID of the issue to retrieve. */
         public var issueId: String
@@ -48,6 +48,13 @@ public extension Events {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** This endpoint lists an issue's events. */
       public struct Status200: Model {
         public var eventID: String

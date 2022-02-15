@@ -6,7 +6,7 @@ public extension Organizations {
   enum ListAnOrganizationsRepositories {
     public static let service = APIService<Response>(id: "List an Organization's Repositories", tag: "Organizations", method: "GET", path: "/api/0/organizations/{organization_slug}/repos/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       public struct Options {
         /** The organization short name. */
         public var organizationSlug: String
@@ -35,6 +35,13 @@ public extension Organizations {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Return a list of version control repositories for a given organization. */
       public struct Status200: Model {
         public var dateCreated: String

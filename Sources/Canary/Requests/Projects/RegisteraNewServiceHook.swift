@@ -10,7 +10,7 @@ public extension Projects {
   enum RegisteraNewServiceHook {
     public static let service = APIService<Response>(id: "Register a New Service Hook", tag: "Projects", method: "POST", path: "/api/0/projects/{organization_slug}/{project_slug}/hooks/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       /** Register a new service hook on a project.
        Events include:
        - event.alert: An alert is generated for an event (via rules).
@@ -80,6 +80,13 @@ public extension Projects {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Register a new service hook on a project.
        Events include:
        - event.alert: An alert is generated for an event (via rules).

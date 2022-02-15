@@ -6,7 +6,7 @@ public extension Projects {
   enum UpdateaServiceHook {
     public static let service = APIService<Response>(id: "Update a Service Hook", tag: "Projects", method: "PUT", path: "/api/0/projects/{organization_slug}/{project_slug}/hooks/{hook_id}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       /** Update a service hook. */
       public struct Body: Model {
         /** The URL for the webhook. */
@@ -76,6 +76,13 @@ public extension Projects {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Update a service hook. */
       public struct Status200: Model {
         public var dateCreated: String

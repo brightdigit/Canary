@@ -6,7 +6,7 @@ public extension Releases {
   enum CreateaNewDeployForAnOrganization {
     public static let service = APIService<Response>(id: "Create a New Deploy for an Organization", tag: "Releases", method: "POST", path: "/api/0/organizations/{organization_slug}/releases/{version}/deploys/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       /** Create a deploy. */
       public struct Body: Model {
         /** The environment you're deploying to. */
@@ -90,6 +90,13 @@ public extension Releases {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Create a deploy. */
       public struct Status201: Model {
         public var environment: String

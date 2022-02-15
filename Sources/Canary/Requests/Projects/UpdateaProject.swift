@@ -6,7 +6,7 @@ public extension Projects {
   enum UpdateaProject {
     public static let service = APIService<Response>(id: "Update a Project", tag: "Projects", method: "PUT", path: "/api/0/projects/{organization_slug}/{project_slug}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       /** Update various attributes and configurable settings for the given project.  Only supplied values are updated. */
       public struct Body: Model {
         public var digestsMaxDelay: Int?
@@ -100,6 +100,13 @@ public extension Projects {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Update various attributes and configurable settings for the given project.  Only supplied values are updated. */
       public struct Status200: Model {
         public var allowedDomains: [String]

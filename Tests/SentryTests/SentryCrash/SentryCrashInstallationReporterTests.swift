@@ -53,7 +53,7 @@ class SentryCrashInstallationReporterTests: XCTestCase {
     do {
       let jsonPath = Bundle(for: type(of: self)).path(forResource: "Resources/Crash-faulty-report", ofType: "json")
       let jsonData = try Data(contentsOf: URL(fileURLWithPath: jsonPath ?? ""))
-      jsonData.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) -> Void in
+      jsonData.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) in
         let pointer = bytes.bindMemory(to: Int8.self)
         sentrycrashcrs_addUserReport(pointer.baseAddress, Int32(jsonData.count))
       }

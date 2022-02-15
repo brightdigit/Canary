@@ -6,7 +6,7 @@ public extension Releases {
   enum ListAnOrganizationsReleases {
     public static let service = APIService<Response>(id: "List an Organization's Releases", tag: "Releases", method: "GET", path: "/api/0/organizations/{organization_slug}/releases/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization. */
         public var organizationSlug: String
@@ -47,6 +47,13 @@ public extension Releases {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Return a list of releases for a given organization. */
       public struct Status200: Model {
         public var authors: [[String: AnyCodable]]

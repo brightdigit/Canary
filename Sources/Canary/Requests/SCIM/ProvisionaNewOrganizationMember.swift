@@ -6,7 +6,7 @@ public extension SCIM {
   enum ProvisionaNewOrganizationMember {
     public static let service = APIService<Response>(id: "Provision a New Organization Member", tag: "SCIM", method: "POST", path: "/api/0/organizations/{organization_slug}/scim/v2/Users", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["member:write"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       /** Create a new Organization Member via a SCIM Users POST Request. `userName` should be set to the SAML field used for email, and active should be set to `true`. Sentry's SCIM API doesn't currently support setting users to inactive and the member will be deleted if inactive is set to `false`. The API also does not support setting secondary emails. */
       public struct Body: Model {
         public var schemas: [String]
@@ -122,6 +122,13 @@ public extension SCIM {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Create a new Organization Member via a SCIM Users POST Request. `userName` should be set to the SAML field used for email, and active should be set to `true`. Sentry's SCIM API doesn't currently support setting users to inactive and the member will be deleted if inactive is set to `false`. The API also does not support setting secondary emails. */
       public struct Status201: Model {
         public var schemas: [String]

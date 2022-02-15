@@ -2,7 +2,7 @@ import Foundation
 import Prch
 
 /** Sentry Public API */
-public struct CanaryAPI: API {
+public struct CanaryAPI: DateEncodingContainer, API {
   public let baseURL = URL(string: Server.main)!
 
   public var headers: [String: String] {
@@ -21,6 +21,8 @@ public struct CanaryAPI: API {
   public static var dateEncodingFormatter = DateFormatter(formatString: "yyyy-MM-dd'T'HH:mm:ssZZZZZ",
                                                           locale: Locale(identifier: "en_US_POSIX"),
                                                           calendar: Calendar(identifier: .gregorian))
+
+  public var encoder: RequestEncoder
 
   public static let version = "v0"
 

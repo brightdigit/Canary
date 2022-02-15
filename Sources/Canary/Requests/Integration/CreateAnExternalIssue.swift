@@ -6,7 +6,7 @@ public extension Integration {
   enum CreateAnExternalIssue {
     public static let service = APIService<Response>(id: "Create an External Issue", tag: "Integration", method: "POST", path: "/api/0/sentry-app-installations/{uuid}/external-issues/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:write"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       /** Create an external issue from an integration platform integration. */
       public struct Body: Model {
         /** The ID of the Sentry issue to link the external issue to. */
@@ -80,6 +80,13 @@ public extension Integration {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Create an external issue from an integration platform integration. */
       public struct Status200: Model {
         public var id: String

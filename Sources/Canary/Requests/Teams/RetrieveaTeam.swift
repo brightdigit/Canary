@@ -6,7 +6,7 @@ public extension Teams {
   enum RetrieveaTeam {
     public static let service = APIService<Response>(id: "Retrieve a Team", tag: "Teams", method: "GET", path: "/api/0/teams/{organization_slug}/{team_slug}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:read"])])
 
-    public final class Request: APIRequest<Response> {
+    public final class Request: APIRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization the team belongs to. */
         public var organizationSlug: String
@@ -39,6 +39,13 @@ public extension Teams {
     }
 
     public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public var failure: FailureType? {
+        successful ? nil : ()
+      }
+
+      public typealias FailureType = Void
+
+      public typealias APIType = CanaryAPI
       /** Return details on an individual team. */
       public struct Status200: Model {
         public var avatar: Avatar
