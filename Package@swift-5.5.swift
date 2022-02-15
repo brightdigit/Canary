@@ -66,30 +66,23 @@ let package = Package(
   let requiredCoverage: Int = 0
 
   let config = PackageConfiguration([
-    //    "rocket": [
-//      "steps": [
-//        ["hide_dev_dependencies": ["package_path": "Package@swift-5.5.swift"]],
-//        "hide_dev_dependencies",
-//        "git_add",
-//        "commit",
-//        "tag",
-//        "unhide_dev_dependencies",
-//        ["unhide_dev_dependencies": ["package_path": "Package@swift-5.5.swift"]],
-//        "git_add",
-//        ["commit": ["message": "Unhide dev dependencies"]]
-//      ]
-//    ],
+    "rocket": [
+      "steps": [
+        ["hide_dev_dependencies": ["package_path": "Package@swift-5.5.swift"]],
+        "hide_dev_dependencies",
+        "git_add",
+        "commit",
+        "tag",
+        "unhide_dev_dependencies",
+        ["unhide_dev_dependencies": ["package_path": "Package@swift-5.5.swift"]],
+        "git_add",
+        ["commit": ["message": "Unhide dev dependencies"]]
+      ]
+    ],
     "komondor": [
-      "pre-push": [
-        // "swift test --enable-code-coverage --enable-test-discovery",
-        // swiftlint:disable:next line_length
-        // "swift run swift-test-codecov .build/debug/codecov/Canary.json --minimum \(requiredCoverage)"
-      ],
       "pre-commit": [
-        // "swift test --enable-code-coverage --enable-test-discovery --generate-linuxmain",
         "swift run swiftformat .",
         "swift run swiftlint autocorrect",
-        // "swift run sourcedocs generate build --clean --reproducible-docs --all-modules",
         "git add .",
         "swift run swiftformat --lint .",
         "swift run swiftlint"
