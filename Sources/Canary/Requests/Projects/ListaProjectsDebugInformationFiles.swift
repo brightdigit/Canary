@@ -6,7 +6,13 @@ public extension Projects {
   enum ListaProjectsDebugInformationFiles {
     public static let service = Service<Response>(id: "List a Project's Debug Information Files", tag: "Projects", method: "GET", path: "/api/0/projects/{organization_slug}/{project_slug}/files/dsyms/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        ListaProjectsDebugInformationFiles.service
+      }
+
       public struct Options {
         /** The slug of the organization the file belongs to. */
         public var organizationSlug: String
@@ -24,17 +30,16 @@ public extension Projects {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: ListaProjectsDebugInformationFiles.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, projectSlug: String) {
+      public init(organizationSlug: String, projectSlug: String) {
         let options = Options(organizationSlug: organizationSlug, projectSlug: projectSlug)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(options.projectSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(options.projectSlug)")
       }
     }
 

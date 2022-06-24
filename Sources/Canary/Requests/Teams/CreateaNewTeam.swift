@@ -6,7 +6,13 @@ public extension Teams {
   enum CreateaNewTeam {
     public static let service = Service<Response>(id: "Create a New Team", tag: "Teams", method: "POST", path: "/api/0/organizations/{organization_slug}/teams/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:write"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        CreateaNewTeam.service
+      }
+
       /** Create a new team bound to an organization. Only the name of the team is needed to create it, the slug can be auto generated. */
       public struct Body: Model {
         /** The name of the team. */
@@ -48,22 +54,19 @@ public extension Teams {
 
       public var body: Body
 
-      public init(body: Body, options: Options, encoder: RequestEncoder? = nil) {
+      public init(body: Body, options: Options, encoder _: RequestEncoder? = nil) {
         self.body = body
         self.options = options
-        super.init(service: CreateaNewTeam.service) { defaultEncoder in
-          try (encoder ?? defaultEncoder).encode(body)
-        }
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, body: Body) {
+      public init(organizationSlug: String, body: Body) {
         let options = Options(organizationSlug: organizationSlug)
         self.init(body: body, options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)")
       }
     }
 

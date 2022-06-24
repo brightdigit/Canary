@@ -7,7 +7,13 @@ public extension SCIM {
   enum ListAnOrganizationsPaginatedTeams {
     public static let service = Service<Response>(id: "List an Organization's Paginated Teams", tag: "SCIM", method: "GET", path: "/api/0/organizations/{organization_slug}/scim/v2/Groups", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:read"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        ListAnOrganizationsPaginatedTeams.service
+      }
+
       public struct Options {
         /** The slug of the organization. */
         public var organizationSlug: String
@@ -37,20 +43,19 @@ public extension SCIM {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: ListAnOrganizationsPaginatedTeams.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, startIndex: Int? = nil, filter: String? = nil, count: Int? = nil, excludedAttributes: String? = nil) {
+      public init(organizationSlug: String, startIndex: Int? = nil, filter: String? = nil, count: Int? = nil, excludedAttributes: String? = nil) {
         let options = Options(organizationSlug: organizationSlug, startIndex: startIndex, filter: filter, count: count, excludedAttributes: excludedAttributes)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(self.options.organizationSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)")
       }
 
-      override public var queryParameters: [String: Any] {
+      public var queryParameters: [String: Any] {
         var params: [String: Any] = [:]
         if let startIndex = options.startIndex {
           params["startIndex"] = startIndex

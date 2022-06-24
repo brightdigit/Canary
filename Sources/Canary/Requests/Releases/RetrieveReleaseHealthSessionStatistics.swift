@@ -8,7 +8,13 @@ public extension Releases {
   enum RetrieveReleaseHealthSessionStatistics {
     public static let service = Service<Response>(id: "Retrieve Release Health Session Statistics", tag: "Releases", method: "GET", path: "/api/0/organizations/{organization_slug}/sessions/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        RetrieveReleaseHealthSessionStatistics.service
+      }
+
       public struct Options {
         /** The slug of the organization. */
         public var organizationSlug: String
@@ -76,20 +82,19 @@ public extension Releases {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: RetrieveReleaseHealthSessionStatistics.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, project: [Int], field: [String], environment: [String]? = nil, groupBy: [String]? = nil, query: String? = nil, statsPeriod: String? = nil, interval: String? = nil, statsPeriodStart: String? = nil, statsPeriodEnd: String? = nil, start: Date? = nil, end: Date? = nil) {
+      public init(organizationSlug: String, project: [Int], field: [String], environment: [String]? = nil, groupBy: [String]? = nil, query: String? = nil, statsPeriod: String? = nil, interval: String? = nil, statsPeriodStart: String? = nil, statsPeriodEnd: String? = nil, start: Date? = nil, end: Date? = nil) {
         let options = Options(organizationSlug: organizationSlug, project: project, field: field, environment: environment, groupBy: groupBy, query: query, statsPeriod: statsPeriod, interval: interval, statsPeriodStart: statsPeriodStart, statsPeriodEnd: statsPeriodEnd, start: start, end: end)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(self.options.organizationSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)")
       }
 
-      override public var queryParameters: [String: Any] {
+      public var queryParameters: [String: Any] {
         var params: [String: Any] = [:]
         params["project"] = options.project.map { String(describing: $0) }.joined(separator: ",")
         params["field"] = options.field.joined(separator: ",")

@@ -6,7 +6,13 @@ public extension Integration {
   enum CreateAnExternalIssue {
     public static let service = Service<Response>(id: "Create an External Issue", tag: "Integration", method: "POST", path: "/api/0/sentry-app-installations/{uuid}/external-issues/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:write"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        CreateAnExternalIssue.service
+      }
+
       /** Create an external issue from an integration platform integration. */
       public struct Body: Model {
         /** The ID of the Sentry issue to link the external issue to. */
@@ -60,22 +66,19 @@ public extension Integration {
 
       public var body: Body
 
-      public init(body: Body, options: Options, encoder: RequestEncoder? = nil) {
+      public init(body: Body, options: Options, encoder _: RequestEncoder? = nil) {
         self.body = body
         self.options = options
-        super.init(service: CreateAnExternalIssue.service) { defaultEncoder in
-          try (encoder ?? defaultEncoder).encode(body)
-        }
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(uuid: String, body: Body) {
+      public init(uuid: String, body: Body) {
         let options = Options(uuid: uuid)
         self.init(body: body, options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "uuid" + "}", with: "\(options.uuid)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "uuid" + "}", with: "\(options.uuid)")
       }
     }
 

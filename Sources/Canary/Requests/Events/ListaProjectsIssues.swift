@@ -8,7 +8,13 @@ public extension Events {
   enum ListaProjectsIssues {
     public static let service = Service<Response>(id: "List a Project's Issues", tag: "Events", method: "GET", path: "/api/0/projects/{organization_slug}/{project_slug}/issues/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        ListaProjectsIssues.service
+      }
+
       public struct Options {
         /** The slug of the organization the issues belong to. */
         public var organizationSlug: String
@@ -42,20 +48,19 @@ public extension Events {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: ListaProjectsIssues.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, projectSlug: String, statsPeriod: String? = nil, shortIdLookup: Bool? = nil, query: String? = nil, cursor: String? = nil) {
+      public init(organizationSlug: String, projectSlug: String, statsPeriod: String? = nil, shortIdLookup: Bool? = nil, query: String? = nil, cursor: String? = nil) {
         let options = Options(organizationSlug: organizationSlug, projectSlug: projectSlug, statsPeriod: statsPeriod, shortIdLookup: shortIdLookup, query: query, cursor: cursor)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(self.options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(self.options.projectSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(options.projectSlug)")
       }
 
-      override public var queryParameters: [String: Any] {
+      public var queryParameters: [String: Any] {
         var params: [String: Any] = [:]
         if let statsPeriod = options.statsPeriod {
           params["statsPeriod"] = statsPeriod

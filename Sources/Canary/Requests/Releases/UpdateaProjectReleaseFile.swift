@@ -6,7 +6,13 @@ public extension Releases {
   enum UpdateaProjectReleaseFile {
     public static let service = Service<Response>(id: "Update a Project Release File", tag: "Releases", method: "PUT", path: "/api/0/projects/{organization_slug}/{project_slug}/releases/{version}/files/{file_id}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        UpdateaProjectReleaseFile.service
+      }
+
       /** Update a project release file. */
       public struct Body: Model {
         /** The new name of the dist. */
@@ -60,22 +66,19 @@ public extension Releases {
 
       public var body: Body?
 
-      public init(body: Body?, options: Options, encoder: RequestEncoder? = nil) {
+      public init(body: Body?, options: Options, encoder _: RequestEncoder? = nil) {
         self.body = body
         self.options = options
-        super.init(service: UpdateaProjectReleaseFile.service) { defaultEncoder in
-          try (encoder ?? defaultEncoder).encode(body)
-        }
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, projectSlug: String, version: String, fileId: String, body: Body? = nil) {
+      public init(organizationSlug: String, projectSlug: String, version: String, fileId: String, body: Body? = nil) {
         let options = Options(organizationSlug: organizationSlug, projectSlug: projectSlug, version: version, fileId: fileId)
         self.init(body: body, options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(options.projectSlug)").replacingOccurrences(of: "{" + "version" + "}", with: "\(options.version)").replacingOccurrences(of: "{" + "file_id" + "}", with: "\(options.fileId)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(options.projectSlug)").replacingOccurrences(of: "{" + "version" + "}", with: "\(options.version)").replacingOccurrences(of: "{" + "file_id" + "}", with: "\(options.fileId)")
       }
     }
 

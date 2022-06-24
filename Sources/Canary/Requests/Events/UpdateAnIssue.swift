@@ -6,7 +6,13 @@ public extension Events {
   enum UpdateAnIssue {
     public static let service = Service<Response>(id: "Update an Issue", tag: "Events", method: "PUT", path: "/api/0/issues/{issue_id}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:write"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        UpdateAnIssue.service
+      }
+
       /** Updates an individual issue's attributes.  Only the attributes submitted are modified. */
       public struct Body: Model {
         /** The actor id (or username) of the user or team that should be assigned to this issue. */
@@ -71,22 +77,19 @@ public extension Events {
 
       public var body: Body
 
-      public init(body: Body, options: Options, encoder: RequestEncoder? = nil) {
+      public init(body: Body, options: Options, encoder _: RequestEncoder? = nil) {
         self.body = body
         self.options = options
-        super.init(service: UpdateAnIssue.service) { defaultEncoder in
-          try (encoder ?? defaultEncoder).encode(body)
-        }
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(issueId: String, body: Body) {
+      public init(issueId: String, body: Body) {
         let options = Options(issueId: issueId)
         self.init(body: body, options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "issue_id" + "}", with: "\(options.issueId)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "issue_id" + "}", with: "\(options.issueId)")
       }
     }
 

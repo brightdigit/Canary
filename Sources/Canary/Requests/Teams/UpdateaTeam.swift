@@ -6,7 +6,13 @@ public extension Teams {
   enum UpdateaTeam {
     public static let service = Service<Response>(id: "Update a Team", tag: "Teams", method: "PUT", path: "/api/0/teams/{organization_slug}/{team_slug}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:write"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        UpdateaTeam.service
+      }
+
       /** Update various attributes and configurable settings for the given team. */
       public struct Body: Model {
         /** The new name for the team. */
@@ -52,22 +58,19 @@ public extension Teams {
 
       public var body: Body
 
-      public init(body: Body, options: Options, encoder: RequestEncoder? = nil) {
+      public init(body: Body, options: Options, encoder _: RequestEncoder? = nil) {
         self.body = body
         self.options = options
-        super.init(service: UpdateaTeam.service) { defaultEncoder in
-          try (encoder ?? defaultEncoder).encode(body)
-        }
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, teamSlug: String, body: Body) {
+      public init(organizationSlug: String, teamSlug: String, body: Body) {
         let options = Options(organizationSlug: organizationSlug, teamSlug: teamSlug)
         self.init(body: body, options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "team_slug" + "}", with: "\(options.teamSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "team_slug" + "}", with: "\(options.teamSlug)")
       }
     }
 

@@ -6,7 +6,13 @@ public extension Projects {
   enum ListYourProjects {
     public static let service = Service<Response>(id: "List Your Projects", tag: "Projects", method: "GET", path: "/api/0/projects/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        ListYourProjects.service
+      }
+
       public struct Options {
         /** A pointer to the last object fetched and its' sort order; used to retrieve the next or previous results. */
         public var cursor: String?
@@ -20,16 +26,15 @@ public extension Projects {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: ListYourProjects.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(cursor: String? = nil) {
+      public init(cursor: String? = nil) {
         let options = Options(cursor: cursor)
         self.init(options: options)
       }
 
-      override public var queryParameters: [String: Any] {
+      public var queryParameters: [String: Any] {
         var params: [String: Any] = [:]
         if let cursor = options.cursor {
           params["cursor"] = cursor

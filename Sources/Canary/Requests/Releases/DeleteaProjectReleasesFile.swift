@@ -6,7 +6,13 @@ public extension Releases {
   enum DeleteaProjectReleasesFile {
     public static let service = Service<Response>(id: "Delete a Project Release's File", tag: "Releases", method: "DELETE", path: "/api/0/projects/{organization_slug}/{project_slug}/releases/{version}/files/{file_id}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        DeleteaProjectReleasesFile.service
+      }
+
       public struct Options {
         /** The slug of the organization the release belongs to. */
         public var organizationSlug: String
@@ -32,17 +38,16 @@ public extension Releases {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: DeleteaProjectReleasesFile.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, projectSlug: String, version: String, fileId: String) {
+      public init(organizationSlug: String, projectSlug: String, version: String, fileId: String) {
         let options = Options(organizationSlug: organizationSlug, projectSlug: projectSlug, version: version, fileId: fileId)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(options.projectSlug)").replacingOccurrences(of: "{" + "version" + "}", with: "\(options.version)").replacingOccurrences(of: "{" + "file_id" + "}", with: "\(options.fileId)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(options.projectSlug)").replacingOccurrences(of: "{" + "version" + "}", with: "\(options.version)").replacingOccurrences(of: "{" + "file_id" + "}", with: "\(options.fileId)")
       }
     }
 

@@ -6,7 +6,13 @@ public extension Releases {
   enum ListaProjectReleasesCommits {
     public static let service = Service<Response>(id: "List a Project Release's Commits", tag: "Releases", method: "GET", path: "/api/0/projects/{organization_slug}/{project_slug}/releases/{version}/commits/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        ListaProjectReleasesCommits.service
+      }
+
       public struct Options {
         /** The slug of the organization the release belongs to. */
         public var organizationSlug: String
@@ -28,17 +34,16 @@ public extension Releases {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: ListaProjectReleasesCommits.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, projectSlug: String, version: String) {
+      public init(organizationSlug: String, projectSlug: String, version: String) {
         let options = Options(organizationSlug: organizationSlug, projectSlug: projectSlug, version: version)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(options.projectSlug)").replacingOccurrences(of: "{" + "version" + "}", with: "\(options.version)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(options.projectSlug)").replacingOccurrences(of: "{" + "version" + "}", with: "\(options.version)")
       }
     }
 

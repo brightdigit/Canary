@@ -6,7 +6,13 @@ public extension Teams {
   enum CreateaNewProject {
     public static let service = Service<Response>(id: "Create a New Project", tag: "Teams", method: "POST", path: "/api/0/teams/{organization_slug}/{team_slug}/projects/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        CreateaNewProject.service
+      }
+
       /** Create a new project bound to a team. */
       public struct Body: Model {
         /** The name for the new project. */
@@ -52,22 +58,19 @@ public extension Teams {
 
       public var body: Body
 
-      public init(body: Body, options: Options, encoder: RequestEncoder? = nil) {
+      public init(body: Body, options: Options, encoder _: RequestEncoder? = nil) {
         self.body = body
         self.options = options
-        super.init(service: CreateaNewProject.service) { defaultEncoder in
-          try (encoder ?? defaultEncoder).encode(body)
-        }
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, teamSlug: String, body: Body) {
+      public init(organizationSlug: String, teamSlug: String, body: Body) {
         let options = Options(organizationSlug: organizationSlug, teamSlug: teamSlug)
         self.init(body: body, options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "team_slug" + "}", with: "\(options.teamSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "team_slug" + "}", with: "\(options.teamSlug)")
       }
     }
 

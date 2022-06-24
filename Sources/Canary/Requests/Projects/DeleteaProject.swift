@@ -9,7 +9,13 @@ public extension Projects {
   enum DeleteaProject {
     public static let service = Service<Response>(id: "Delete a Project", tag: "Projects", method: "DELETE", path: "/api/0/projects/{organization_slug}/{project_slug}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:admin"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        DeleteaProject.service
+      }
+
       public struct Options {
         /** The slug of the organization the project belongs to. */
         public var organizationSlug: String
@@ -27,17 +33,16 @@ public extension Projects {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: DeleteaProject.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, projectSlug: String) {
+      public init(organizationSlug: String, projectSlug: String) {
         let options = Options(organizationSlug: organizationSlug, projectSlug: projectSlug)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(options.projectSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(options.projectSlug)")
       }
     }
 

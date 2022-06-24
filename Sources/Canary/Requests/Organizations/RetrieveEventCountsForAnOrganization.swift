@@ -25,7 +25,13 @@ public extension Organizations {
       case _1d = "1d"
     }
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public var service: Service<ResponseType> {
+        return RetrieveEventCountsForAnOrganization.service
+      }
+
+      public typealias ResponseType = Response
+
       public struct Options {
         /** The slug of the organization the event ID should be looked up in. */
         public var organizationSlug: String
@@ -55,20 +61,19 @@ public extension Organizations {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: RetrieveEventCountsForAnOrganization.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, stat: Stat? = nil, since: Date? = nil, until: Date? = nil, resolution: Resolution? = nil) {
+      public init(organizationSlug: String, stat: Stat? = nil, since: Date? = nil, until: Date? = nil, resolution: Resolution? = nil) {
         let options = Options(organizationSlug: organizationSlug, stat: stat, since: since, until: until, resolution: resolution)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(self.options.organizationSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)")
       }
 
-      override public var queryParameters: [String: Any] {
+      public var queryParameters: [String: Any] {
         var params: [String: Any] = [:]
         if let stat = options.stat?.encode() {
           params["stat"] = stat

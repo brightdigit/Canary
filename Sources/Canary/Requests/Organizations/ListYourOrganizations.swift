@@ -6,7 +6,13 @@ public extension Organizations {
   enum ListYourOrganizations {
     public static let service = Service<Response>(id: "List Your Organizations", tag: "Organizations", method: "GET", path: "/api/0/organizations/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        ListYourOrganizations.service
+      }
+
       public struct Options {
         /** Restrict results to organizations in which you are an organization owner. */
         public var owner: Bool?
@@ -24,16 +30,15 @@ public extension Organizations {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: ListYourOrganizations.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(owner: Bool? = nil, cursor: String? = nil) {
+      public init(owner: Bool? = nil, cursor: String? = nil) {
         let options = Options(owner: owner, cursor: cursor)
         self.init(options: options)
       }
 
-      override public var queryParameters: [String: Any] {
+      public var queryParameters: [String: Any] {
         var params: [String: Any] = [:]
         if let owner = options.owner {
           params["owner"] = owner

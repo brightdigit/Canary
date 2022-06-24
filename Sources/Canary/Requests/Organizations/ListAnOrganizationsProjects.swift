@@ -6,7 +6,13 @@ public extension Organizations {
   enum ListAnOrganizationsProjects {
     public static let service = Service<Response>(id: "List an Organization's Projects", tag: "Organizations", method: "GET", path: "/api/0/organizations/{organization_slug}/projects/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        ListAnOrganizationsProjects.service
+      }
+
       public struct Options {
         /** The slug of the organization for which the projects should be listed. */
         public var organizationSlug: String
@@ -24,20 +30,19 @@ public extension Organizations {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: ListAnOrganizationsProjects.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, cursor: String? = nil) {
+      public init(organizationSlug: String, cursor: String? = nil) {
         let options = Options(organizationSlug: organizationSlug, cursor: cursor)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(self.options.organizationSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)")
       }
 
-      override public var queryParameters: [String: Any] {
+      public var queryParameters: [String: Any] {
         var params: [String: Any] = [:]
         if let cursor = options.cursor {
           params["cursor"] = cursor

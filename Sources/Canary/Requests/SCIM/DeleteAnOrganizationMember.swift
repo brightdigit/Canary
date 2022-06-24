@@ -6,7 +6,13 @@ public extension SCIM {
   enum DeleteAnOrganizationMember {
     public static let service = Service<Response>(id: "Delete an Organization Member", tag: "SCIM", method: "DELETE", path: "/api/0/organizations/{organization_slug}/scim/v2/Users/{member_id}", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["member:admin"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        DeleteAnOrganizationMember.service
+      }
+
       public struct Options {
         /** The slug of the organization. */
         public var organizationSlug: String
@@ -24,17 +30,16 @@ public extension SCIM {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: DeleteAnOrganizationMember.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, memberId: Int) {
+      public init(organizationSlug: String, memberId: Int) {
         let options = Options(organizationSlug: organizationSlug, memberId: memberId)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "member_id" + "}", with: "\(options.memberId)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "member_id" + "}", with: "\(options.memberId)")
       }
     }
 

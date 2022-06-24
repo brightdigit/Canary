@@ -7,7 +7,7 @@ import Prch
     enum ResolveAnEventID {
       public static let service = Service<Response>(id: "Resolve an Event ID", tag: "Organizations", method: "GET", path: "/api/0/organizations/{organization_slug}/eventids/{event_id}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
 
-      public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+      public struct Request: DeprecatedRequest<Response, CanaryAPI> {
         public struct Options {
           /** The slug of the organization the event ID should be looked up in. */
           public var organizationSlug: String
@@ -25,17 +25,16 @@ import Prch
 
         public init(options: Options) {
           self.options = options
-          super.init(service: ResolveAnEventID.service)
         }
 
         /// convenience initialiser so an Option doesn't have to be created
-        public convenience init(organizationSlug: String, eventId: String) {
+        public init(organizationSlug: String, eventId: String) {
           let options = Options(organizationSlug: organizationSlug, eventId: eventId)
           self.init(options: options)
         }
 
-        override public var path: String {
-          super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "event_id" + "}", with: "\(options.eventId)")
+        public var path: String {
+          service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "event_id" + "}", with: "\(options.eventId)")
         }
       }
 

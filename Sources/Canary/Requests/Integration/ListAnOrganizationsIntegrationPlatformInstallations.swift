@@ -6,7 +6,13 @@ public extension Integration {
   enum ListAnOrganizationsIntegrationPlatformInstallations {
     public static let service = Service<Response>(id: "List an Organization's Integration Platform Installations", tag: "Integration", method: "GET", path: "/api/0/organizations/{organization_slug}/sentry-app-installations/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org:read", "org:integrations"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        ListAnOrganizationsIntegrationPlatformInstallations.service
+      }
+
       public struct Options {
         /** The organization short name. */
         public var organizationSlug: String
@@ -20,17 +26,16 @@ public extension Integration {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: ListAnOrganizationsIntegrationPlatformInstallations.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String) {
+      public init(organizationSlug: String) {
         let options = Options(organizationSlug: organizationSlug)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)")
       }
     }
 

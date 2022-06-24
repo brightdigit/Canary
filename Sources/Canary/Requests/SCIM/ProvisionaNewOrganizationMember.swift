@@ -6,7 +6,13 @@ public extension SCIM {
   enum ProvisionaNewOrganizationMember {
     public static let service = Service<Response>(id: "Provision a New Organization Member", tag: "SCIM", method: "POST", path: "/api/0/organizations/{organization_slug}/scim/v2/Users", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["member:write"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        ProvisionaNewOrganizationMember.service
+      }
+
       /** Create a new Organization Member via a SCIM Users POST Request. `userName` should be set to the SAML field used for email, and active should be set to `true`. Sentry's SCIM API doesn't currently support setting users to inactive and the member will be deleted if inactive is set to `false`. The API also does not support setting secondary emails. */
       public struct Body: Model {
         public var schemas: [String]
@@ -102,22 +108,19 @@ public extension SCIM {
 
       public var body: Body
 
-      public init(body: Body, options: Options, encoder: RequestEncoder? = nil) {
+      public init(body: Body, options: Options, encoder _: RequestEncoder? = nil) {
         self.body = body
         self.options = options
-        super.init(service: ProvisionaNewOrganizationMember.service) { defaultEncoder in
-          try (encoder ?? defaultEncoder).encode(body)
-        }
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, body: Body) {
+      public init(organizationSlug: String, body: Body) {
         let options = Options(organizationSlug: organizationSlug)
         self.init(body: body, options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)")
       }
     }
 

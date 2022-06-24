@@ -12,7 +12,13 @@ public extension Events {
   enum RetrieveAnIssue {
     public static let service = Service<Response>(id: "Retrieve an Issue", tag: "Events", method: "GET", path: "/api/0/issues/{issue_id}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:read"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        RetrieveAnIssue.service
+      }
+
       public struct Options {
         /** The ID of the issue to retrieve. */
         public var issueId: String
@@ -26,17 +32,16 @@ public extension Events {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: RetrieveAnIssue.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(issueId: String) {
+      public init(issueId: String) {
         let options = Options(issueId: issueId)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "issue_id" + "}", with: "\(options.issueId)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "issue_id" + "}", with: "\(options.issueId)")
       }
     }
 

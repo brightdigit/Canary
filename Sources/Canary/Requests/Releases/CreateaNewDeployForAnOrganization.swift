@@ -6,7 +6,13 @@ public extension Releases {
   enum CreateaNewDeployForAnOrganization {
     public static let service = Service<Response>(id: "Create a New Deploy for an Organization", tag: "Releases", method: "POST", path: "/api/0/organizations/{organization_slug}/releases/{version}/deploys/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        CreateaNewDeployForAnOrganization.service
+      }
+
       /** Create a deploy. */
       public struct Body: Model {
         /** The environment you're deploying to. */
@@ -70,22 +76,19 @@ public extension Releases {
 
       public var body: Body?
 
-      public init(body: Body?, options: Options, encoder: RequestEncoder? = nil) {
+      public init(body: Body?, options: Options, encoder _: RequestEncoder? = nil) {
         self.body = body
         self.options = options
-        super.init(service: CreateaNewDeployForAnOrganization.service) { defaultEncoder in
-          try (encoder ?? defaultEncoder).encode(body)
-        }
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, version: String, body: Body? = nil) {
+      public init(organizationSlug: String, version: String, body: Body? = nil) {
         let options = Options(organizationSlug: organizationSlug, version: version)
         self.init(body: body, options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "version" + "}", with: "\(options.version)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "version" + "}", with: "\(options.version)")
       }
     }
 

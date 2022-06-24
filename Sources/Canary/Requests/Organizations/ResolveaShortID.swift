@@ -6,7 +6,13 @@ public extension Organizations {
   enum ResolveaShortID {
     public static let service = Service<Response>(id: "Resolve a Short ID", tag: "Organizations", method: "GET", path: "/api/0/organizations/{organization_slug}/shortids/{short_id}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        ResolveaShortID.service
+      }
+
       public struct Options {
         /** The slug of the organization the short ID should be looked up in. */
         public var organizationSlug: String
@@ -24,17 +30,16 @@ public extension Organizations {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: ResolveaShortID.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, shortId: String) {
+      public init(organizationSlug: String, shortId: String) {
         let options = Options(organizationSlug: organizationSlug, shortId: shortId)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "short_id" + "}", with: "\(options.shortId)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "short_id" + "}", with: "\(options.shortId)")
       }
     }
 

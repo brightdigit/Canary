@@ -11,7 +11,13 @@ public extension Projects {
   enum UploadaNewFile {
     public static let service = Service<Response>(id: "Upload a New File", tag: "Projects", method: "POST", path: "/api/0/projects/{organization_slug}/{project_slug}/files/dsyms/", hasBody: true, isUpload: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        UploadaNewFile.service
+      }
+
       public struct Options {
         /** The slug of the organization the project belongs to. */
         public var organizationSlug: String
@@ -33,20 +39,19 @@ public extension Projects {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: UploadaNewFile.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, projectSlug: String, file: File) {
+      public init(organizationSlug: String, projectSlug: String, file: File) {
         let options = Options(organizationSlug: organizationSlug, projectSlug: projectSlug, file: file)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(self.options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(self.options.projectSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(options.projectSlug)")
       }
 
-      override public var formParameters: [String: Any] {
+      public var formParameters: [String: Any] {
         var params: [String: Any] = [:]
         params["file"] = options.file.base64EncodedString(options:)
         return params

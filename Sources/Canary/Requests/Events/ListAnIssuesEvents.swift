@@ -6,7 +6,13 @@ public extension Events {
   enum ListAnIssuesEvents {
     public static let service = Service<Response>(id: "List an Issue's Events", tag: "Events", method: "GET", path: "/api/0/issues/{issue_id}/events/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:read"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        ListAnIssuesEvents.service
+      }
+
       public struct Options {
         /** The ID of the issue to retrieve. */
         public var issueId: String
@@ -25,20 +31,19 @@ public extension Events {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: ListAnIssuesEvents.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(issueId: String, full: Bool? = nil) {
+      public init(issueId: String, full: Bool? = nil) {
         let options = Options(issueId: issueId, full: full)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "issue_id" + "}", with: "\(self.options.issueId)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "issue_id" + "}", with: "\(options.issueId)")
       }
 
-      override public var queryParameters: [String: Any] {
+      public var queryParameters: [String: Any] {
         var params: [String: Any] = [:]
         if let full = options.full {
           params["full"] = full

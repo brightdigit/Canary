@@ -24,7 +24,12 @@ public extension Teams {
       case _1d = "1d"
     }
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public var service: Service<ResponseType> {
+        return RetrieveEventCountsForaTeam.service
+      }
+
+      public typealias ResponseType = Response
       public struct Options {
         /** The slug of the organization the team belongs to. */
         public var organizationSlug: String
@@ -58,20 +63,19 @@ public extension Teams {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: RetrieveEventCountsForaTeam.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, teamSlug: String, stat: Stat? = nil, since: Date? = nil, until: Date? = nil, resolution: Resolution? = nil) {
+      public init(organizationSlug: String, teamSlug: String, stat: Stat? = nil, since: Date? = nil, until: Date? = nil, resolution: Resolution? = nil) {
         let options = Options(organizationSlug: organizationSlug, teamSlug: teamSlug, stat: stat, since: since, until: until, resolution: resolution)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(self.options.organizationSlug)").replacingOccurrences(of: "{" + "team_slug" + "}", with: "\(self.options.teamSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "team_slug" + "}", with: "\(options.teamSlug)")
       }
 
-      override public var queryParameters: [String: Any] {
+      public var queryParameters: [String: Any] {
         var params: [String: Any] = [:]
         if let stat = options.stat?.encode() {
           params["stat"] = stat

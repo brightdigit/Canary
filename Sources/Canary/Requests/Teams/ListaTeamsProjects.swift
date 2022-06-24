@@ -6,7 +6,13 @@ public extension Teams {
   enum ListaTeamsProjects {
     public static let service = Service<Response>(id: "List a Team's Projects", tag: "Teams", method: "GET", path: "/api/0/teams/{organization_slug}/{team_slug}/projects/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        ListaTeamsProjects.service
+      }
+
       public struct Options {
         /** The slug of the organization the team belongs to. */
         public var organizationSlug: String
@@ -28,20 +34,19 @@ public extension Teams {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: ListaTeamsProjects.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, teamSlug: String, cursor: String? = nil) {
+      public init(organizationSlug: String, teamSlug: String, cursor: String? = nil) {
         let options = Options(organizationSlug: organizationSlug, teamSlug: teamSlug, cursor: cursor)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(self.options.organizationSlug)").replacingOccurrences(of: "{" + "team_slug" + "}", with: "\(self.options.teamSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "team_slug" + "}", with: "\(options.teamSlug)")
       }
 
-      override public var queryParameters: [String: Any] {
+      public var queryParameters: [String: Any] {
         var params: [String: Any] = [:]
         if let cursor = options.cursor {
           params["cursor"] = cursor

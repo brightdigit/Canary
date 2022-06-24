@@ -6,7 +6,13 @@ public extension Projects {
   enum ListaProjectsClientKeys {
     public static let service = Service<Response>(id: "List a Project's Client Keys", tag: "Projects", method: "GET", path: "/api/0/projects/{organization_slug}/{project_slug}/keys/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        ListaProjectsClientKeys.service
+      }
+
       public struct Options {
         /** The slug of the organization the client keys belong to. */
         public var organizationSlug: String
@@ -28,20 +34,19 @@ public extension Projects {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: ListaProjectsClientKeys.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, projectSlug: String, cursor: String? = nil) {
+      public init(organizationSlug: String, projectSlug: String, cursor: String? = nil) {
         let options = Options(organizationSlug: organizationSlug, projectSlug: projectSlug, cursor: cursor)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(self.options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(self.options.projectSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(options.projectSlug)")
       }
 
-      override public var queryParameters: [String: Any] {
+      public var queryParameters: [String: Any] {
         var params: [String: Any] = [:]
         if let cursor = options.cursor {
           params["cursor"] = cursor

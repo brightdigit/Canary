@@ -7,7 +7,7 @@ import Prch
     enum RetrieveTheLatestEventForAnIssue {
       public static let service = Service<Response>(id: "Retrieve the Latest Event for an Issue", tag: "Events", method: "GET", path: "/api/0/issues/{issue_id}/events/latest/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:read"])])
 
-      public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+      public struct Request: DeprecatedRequest<Response, CanaryAPI> {
         public struct Options {
           /** The ID of the issue. */
           public var issueId: String
@@ -21,17 +21,16 @@ import Prch
 
         public init(options: Options) {
           self.options = options
-          super.init(service: RetrieveTheLatestEventForAnIssue.service)
         }
 
         /// convenience initialiser so an Option doesn't have to be created
-        public convenience init(issueId: String) {
+        public init(issueId: String) {
           let options = Options(issueId: issueId)
           self.init(options: options)
         }
 
-        override public var path: String {
-          super.path.replacingOccurrences(of: "{" + "issue_id" + "}", with: "\(options.issueId)")
+        public var path: String {
+          service.path.replacingOccurrences(of: "{" + "issue_id" + "}", with: "\(options.issueId)")
         }
       }
 

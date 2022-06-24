@@ -11,7 +11,13 @@ public extension Releases {
   enum CreateaNewReleaseForAnOrganization {
     public static let service = Service<Response>(id: "Create a New Release for an Organization", tag: "Releases", method: "POST", path: "/api/0/organizations/{organization_slug}/releases/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        CreateaNewReleaseForAnOrganization.service
+      }
+
       /** Create a new release for the given organization.  Releases are used by
        Sentry to improve its error reporting abilities by correlating
        first seen events with the release that might have introduced the
@@ -230,22 +236,19 @@ public extension Releases {
 
       public var body: Body?
 
-      public init(body: Body?, options: Options, encoder: RequestEncoder? = nil) {
+      public init(body: Body?, options: Options, encoder _: RequestEncoder? = nil) {
         self.body = body
         self.options = options
-        super.init(service: CreateaNewReleaseForAnOrganization.service) { defaultEncoder in
-          try (encoder ?? defaultEncoder).encode(body)
-        }
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, body: Body? = nil) {
+      public init(organizationSlug: String, body: Body? = nil) {
         let options = Options(organizationSlug: organizationSlug)
         self.init(body: body, options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)")
       }
     }
 

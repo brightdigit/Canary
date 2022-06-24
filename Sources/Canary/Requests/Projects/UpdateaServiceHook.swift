@@ -6,7 +6,13 @@ public extension Projects {
   enum UpdateaServiceHook {
     public static let service = Service<Response>(id: "Update a Service Hook", tag: "Projects", method: "PUT", path: "/api/0/projects/{organization_slug}/{project_slug}/hooks/{hook_id}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
 
-    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        UpdateaServiceHook.service
+      }
+
       /** Update a service hook. */
       public struct Body: Model {
         /** The URL for the webhook. */
@@ -56,22 +62,19 @@ public extension Projects {
 
       public var body: Body?
 
-      public init(body: Body?, options: Options, encoder: RequestEncoder? = nil) {
+      public init(body: Body?, options: Options, encoder _: RequestEncoder? = nil) {
         self.body = body
         self.options = options
-        super.init(service: UpdateaServiceHook.service) { defaultEncoder in
-          try (encoder ?? defaultEncoder).encode(body)
-        }
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, projectSlug: String, hookId: String, body: Body? = nil) {
+      public init(organizationSlug: String, projectSlug: String, hookId: String, body: Body? = nil) {
         let options = Options(organizationSlug: organizationSlug, projectSlug: projectSlug, hookId: hookId)
         self.init(body: body, options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(options.projectSlug)").replacingOccurrences(of: "{" + "hook_id" + "}", with: "\(options.hookId)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(options.projectSlug)").replacingOccurrences(of: "{" + "hook_id" + "}", with: "\(options.hookId)")
       }
     }
 
