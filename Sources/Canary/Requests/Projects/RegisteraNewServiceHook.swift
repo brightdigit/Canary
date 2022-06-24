@@ -8,9 +8,9 @@ public extension Projects {
    - event.created: A new event has been processed.
    This endpoint requires the 'servicehooks' feature to be enabled for your project. */
   enum RegisteraNewServiceHook {
-    public static let service = APIService<Response>(id: "Register a New Service Hook", tag: "Projects", method: "POST", path: "/api/0/projects/{organization_slug}/{project_slug}/hooks/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
+    public static let service = Service<Response>(id: "Register a New Service Hook", tag: "Projects", method: "POST", path: "/api/0/projects/{organization_slug}/{project_slug}/hooks/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       /** Register a new service hook on a project.
        Events include:
        - event.alert: An alert is generated for an event (via rules).
@@ -79,7 +79,7 @@ public extension Projects {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -183,7 +183,7 @@ public extension Projects {
         case 201: self = try .status201(decoder.decode(Status201.self, from: data))
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

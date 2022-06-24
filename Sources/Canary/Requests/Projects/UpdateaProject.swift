@@ -4,9 +4,9 @@ import Prch
 public extension Projects {
   /** Update various attributes and configurable settings for the given project.  Only supplied values are updated. */
   enum UpdateaProject {
-    public static let service = APIService<Response>(id: "Update a Project", tag: "Projects", method: "PUT", path: "/api/0/projects/{organization_slug}/{project_slug}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
+    public static let service = Service<Response>(id: "Update a Project", tag: "Projects", method: "PUT", path: "/api/0/projects/{organization_slug}/{project_slug}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       /** Update various attributes and configurable settings for the given project.  Only supplied values are updated. */
       public struct Body: Model {
         public var digestsMaxDelay: Int?
@@ -99,7 +99,7 @@ public extension Projects {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -425,7 +425,7 @@ public extension Projects {
         public struct Organization: Model {
           public var avatar: Avatar
 
-          public var dateCreated: DateTime
+          public var dateCreated: Date
 
           public var id: String
 
@@ -491,7 +491,7 @@ public extension Projects {
             }
           }
 
-          public init(avatar: Avatar, dateCreated: DateTime, id: String, isEarlyAdopter: Bool, name: String, require2FA: Bool, slug: String, status: Status) {
+          public init(avatar: Avatar, dateCreated: Date, id: String, isEarlyAdopter: Bool, name: String, require2FA: Bool, slug: String, status: Status) {
             self.avatar = avatar
             self.dateCreated = dateCreated
             self.id = id
@@ -938,7 +938,7 @@ public extension Projects {
         case 400: self = .status400
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

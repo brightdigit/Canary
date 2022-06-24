@@ -4,9 +4,9 @@ import Prch
 public extension Teams {
   /** Return details on an individual team. */
   enum RetrieveaTeam {
-    public static let service = APIService<Response>(id: "Retrieve a Team", tag: "Teams", method: "GET", path: "/api/0/teams/{organization_slug}/{team_slug}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:read"])])
+    public static let service = Service<Response>(id: "Retrieve a Team", tag: "Teams", method: "GET", path: "/api/0/teams/{organization_slug}/{team_slug}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:read"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization the team belongs to. */
         public var organizationSlug: String
@@ -38,7 +38,7 @@ public extension Teams {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -50,7 +50,7 @@ public extension Teams {
       public struct Status200: Model {
         public var avatar: Avatar
 
-        public var dateCreated: DateTime
+        public var dateCreated: Date
 
         public var hasAccess: Bool
 
@@ -98,7 +98,7 @@ public extension Teams {
         public struct Organization: Model {
           public var avatar: Avatar
 
-          public var dateCreated: DateTime
+          public var dateCreated: Date
 
           public var id: String
 
@@ -164,7 +164,7 @@ public extension Teams {
             }
           }
 
-          public init(avatar: Avatar, dateCreated: DateTime, id: String, isEarlyAdopter: Bool, name: String, require2FA: Bool, slug: String, status: Status) {
+          public init(avatar: Avatar, dateCreated: Date, id: String, isEarlyAdopter: Bool, name: String, require2FA: Bool, slug: String, status: Status) {
             self.avatar = avatar
             self.dateCreated = dateCreated
             self.id = id
@@ -202,7 +202,7 @@ public extension Teams {
           }
         }
 
-        public init(avatar: Avatar, dateCreated: DateTime, hasAccess: Bool, id: String, isMember: Bool, isPending: Bool, memberCount: Int, name: String, slug: String, organization: Organization) {
+        public init(avatar: Avatar, dateCreated: Date, hasAccess: Bool, id: String, isMember: Bool, isPending: Bool, memberCount: Int, name: String, slug: String, organization: Organization) {
           self.avatar = avatar
           self.dateCreated = dateCreated
           self.hasAccess = hasAccess
@@ -292,7 +292,7 @@ public extension Teams {
         case 200: self = try .status200(decoder.decode(Status200.self, from: data))
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

@@ -4,9 +4,9 @@ import Prch
 public extension Organizations {
   /** Return a list of organizations available to the authenticated session.  This is particularly useful for requests with an user bound context.  For API key based requests this will only return the organization that belongs to the key. */
   enum ListYourOrganizations {
-    public static let service = APIService<Response>(id: "List Your Organizations", tag: "Organizations", method: "GET", path: "/api/0/organizations/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
+    public static let service = Service<Response>(id: "List Your Organizations", tag: "Organizations", method: "GET", path: "/api/0/organizations/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** Restrict results to organizations in which you are an organization owner. */
         public var owner: Bool?
@@ -45,7 +45,7 @@ public extension Organizations {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -57,7 +57,7 @@ public extension Organizations {
       public struct Status200: Model {
         public var avatar: Avatar
 
-        public var dateCreated: DateTime
+        public var dateCreated: Date
 
         public var id: String
 
@@ -123,7 +123,7 @@ public extension Organizations {
           }
         }
 
-        public init(avatar: Avatar, dateCreated: DateTime, id: String, isEarlyAdopter: Bool, name: String, require2FA: Bool, slug: String, status: Status) {
+        public init(avatar: Avatar, dateCreated: Date, id: String, isEarlyAdopter: Bool, name: String, require2FA: Bool, slug: String, status: Status) {
           self.avatar = avatar
           self.dateCreated = dateCreated
           self.id = id
@@ -207,7 +207,7 @@ public extension Organizations {
         case 200: self = try .status200(decoder.decode([Status200].self, from: data))
         case 401: self = .status401
         case 403: self = .status403
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

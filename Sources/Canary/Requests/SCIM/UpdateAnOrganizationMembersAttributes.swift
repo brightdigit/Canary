@@ -4,9 +4,9 @@ import Prch
 public extension SCIM {
   /** Update an organization member's attributes with a SCIM PATCH Request. The only supported attribute is `active`. After setting `active` to false Sentry will permanently delete the Organization Member. */
   enum UpdateAnOrganizationMembersAttributes {
-    public static let service = APIService<Response>(id: "Update an Organization Member's Attributes", tag: "SCIM", method: "PATCH", path: "/api/0/organizations/{organization_slug}/scim/v2/Users/{member_id}", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["member:write"])])
+    public static let service = Service<Response>(id: "Update an Organization Member's Attributes", tag: "SCIM", method: "PATCH", path: "/api/0/organizations/{organization_slug}/scim/v2/Users/{member_id}", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["member:write"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       /** Update an organization member's attributes with a SCIM PATCH Request. The only supported attribute is `active`. After setting `active` to false Sentry will permanently delete the Organization Member. */
       public struct Body: Model {
         public var schemas: [String]
@@ -69,7 +69,7 @@ public extension SCIM {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -128,7 +128,7 @@ public extension SCIM {
         case 401: self = .status401
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

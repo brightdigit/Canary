@@ -5,9 +5,9 @@ public extension SCIM {
   /** Returns a paginated list of teams bound to a organization with a SCIM Groups GET Request.
    - Note that the members field will only contain up to 10000 members. */
   enum ListAnOrganizationsPaginatedTeams {
-    public static let service = APIService<Response>(id: "List an Organization's Paginated Teams", tag: "SCIM", method: "GET", path: "/api/0/organizations/{organization_slug}/scim/v2/Groups", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:read"])])
+    public static let service = Service<Response>(id: "List an Organization's Paginated Teams", tag: "SCIM", method: "GET", path: "/api/0/organizations/{organization_slug}/scim/v2/Groups", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:read"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization. */
         public var organizationSlug: String
@@ -68,7 +68,7 @@ public extension SCIM {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -261,7 +261,7 @@ public extension SCIM {
         case 401: self = .status401
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

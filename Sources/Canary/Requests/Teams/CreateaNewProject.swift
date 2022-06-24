@@ -4,9 +4,9 @@ import Prch
 public extension Teams {
   /** Create a new project bound to a team. */
   enum CreateaNewProject {
-    public static let service = APIService<Response>(id: "Create a New Project", tag: "Teams", method: "POST", path: "/api/0/teams/{organization_slug}/{team_slug}/projects/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
+    public static let service = Service<Response>(id: "Create a New Project", tag: "Teams", method: "POST", path: "/api/0/teams/{organization_slug}/{team_slug}/projects/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       /** Create a new project bound to a team. */
       public struct Body: Model {
         /** The name for the new project. */
@@ -71,7 +71,7 @@ public extension Teams {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -93,7 +93,7 @@ public extension Teams {
 
         public var color: String
 
-        public var dateCreated: DateTime
+        public var dateCreated: Date
 
         public var features: [String]
 
@@ -145,7 +145,7 @@ public extension Teams {
           }
         }
 
-        public init(avatar: Avatar, color: String, dateCreated: DateTime, features: [String], firstEvent: String?, hasAccess: Bool, id: String, isBookmarked: Bool, isInternal: Bool, isMember: Bool, isPublic: Bool, name: String, platform: String?, slug: String, status: Status) {
+        public init(avatar: Avatar, color: String, dateCreated: Date, features: [String], firstEvent: String?, hasAccess: Bool, id: String, isBookmarked: Bool, isInternal: Bool, isMember: Bool, isPublic: Bool, name: String, platform: String?, slug: String, status: Status) {
           self.avatar = avatar
           self.color = color
           self.dateCreated = dateCreated
@@ -262,7 +262,7 @@ public extension Teams {
         case 403: self = .status403
         case 404: self = .status404
         case 409: self = .status409
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

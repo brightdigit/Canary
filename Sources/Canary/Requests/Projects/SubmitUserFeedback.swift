@@ -8,9 +8,9 @@ public extension Projects {
    If feedback is rejected due to a mutability threshold, a 409 status code will be returned.
    Note: Feedback may be submitted with DSN authentication (see auth documentation). */
   enum SubmitUserFeedback {
-    public static let service = APIService<Response>(id: "Submit User Feedback", tag: "Projects", method: "POST", path: "/api/0/projects/{organization_slug}/{project_slug}/user-feedback/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"]), SecurityRequirement(type: "dsn", scopes: [])])
+    public static let service = Service<Response>(id: "Submit User Feedback", tag: "Projects", method: "POST", path: "/api/0/projects/{organization_slug}/{project_slug}/user-feedback/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"]), SecurityRequirement(type: "dsn", scopes: [])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       /** Submit and associate user feedback with an issue.
        Feedback must be received by the server no more than 30 minutes after the event was saved.
        Additionally, within 5 minutes of submitting feedback it may also be overwritten. This is useful in situations where you may need to retry sending a request due to network failures.
@@ -91,7 +91,7 @@ public extension Projects {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -252,7 +252,7 @@ public extension Projects {
         case 403: self = .status403
         case 404: self = .status404
         case 409: self = .status409
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

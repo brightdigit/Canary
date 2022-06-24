@@ -4,9 +4,9 @@ import Prch
 public extension Projects {
   /** Retrieve a list of debug information files for a given project. */
   enum ListaProjectsDebugInformationFiles {
-    public static let service = APIService<Response>(id: "List a Project's Debug Information Files", tag: "Projects", method: "GET", path: "/api/0/projects/{organization_slug}/{project_slug}/files/dsyms/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
+    public static let service = Service<Response>(id: "List a Project's Debug Information Files", tag: "Projects", method: "GET", path: "/api/0/projects/{organization_slug}/{project_slug}/files/dsyms/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization the file belongs to. */
         public var organizationSlug: String
@@ -38,7 +38,7 @@ public extension Projects {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -91,7 +91,7 @@ public extension Projects {
         case 200: self = .status200
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

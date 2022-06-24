@@ -10,9 +10,9 @@ public extension Events {
 
   /** Return details on an individual issue. This returns the basic stats for the issue (title, last seen, first seen), some overall numbers (number of comments, user reports) as well as the summarized event data. */
   enum RetrieveAnIssue {
-    public static let service = APIService<Response>(id: "Retrieve an Issue", tag: "Events", method: "GET", path: "/api/0/issues/{issue_id}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:read"])])
+    public static let service = Service<Response>(id: "Retrieve an Issue", tag: "Events", method: "GET", path: "/api/0/issues/{issue_id}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:read"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** The ID of the issue to retrieve. */
         public var issueId: String
@@ -40,7 +40,7 @@ public extension Events {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -516,7 +516,7 @@ public extension Events {
         switch statusCode {
         case 200: self = try .status200(decoder.decode(Status200.self, from: data))
         case 403: self = .status403
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

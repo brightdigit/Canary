@@ -6,9 +6,9 @@ public extension Events {
    Only queries by 'id' are accepted.
    If any ids are out of scope this operation will succeed without any data mutation. */
   enum BulkRemoveaListOfIssues {
-    public static let service = APIService<Response>(id: "Bulk Remove a List of Issues", tag: "Events", method: "DELETE", path: "/api/0/projects/{organization_slug}/{project_slug}/issues/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:admin"])])
+    public static let service = Service<Response>(id: "Bulk Remove a List of Issues", tag: "Events", method: "DELETE", path: "/api/0/projects/{organization_slug}/{project_slug}/issues/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:admin"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization the issues belong to. */
         public var organizationSlug: String
@@ -52,7 +52,7 @@ public extension Events {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -105,7 +105,7 @@ public extension Events {
         case 204: self = .status204
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

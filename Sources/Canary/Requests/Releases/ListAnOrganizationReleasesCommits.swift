@@ -4,9 +4,9 @@ import Prch
 public extension Releases {
   /** List an organization release's commits. */
   enum ListAnOrganizationReleasesCommits {
-    public static let service = APIService<Response>(id: "List an Organization Release's Commits", tag: "Releases", method: "GET", path: "/api/0/organizations/{organization_slug}/releases/{version}/commits/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
+    public static let service = Service<Response>(id: "List an Organization Release's Commits", tag: "Releases", method: "GET", path: "/api/0/organizations/{organization_slug}/releases/{version}/commits/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization the release belongs to. */
         public var organizationSlug: String
@@ -38,7 +38,7 @@ public extension Releases {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -48,13 +48,13 @@ public extension Releases {
       public typealias APIType = CanaryAPI
       /** List an organization release's commits. */
       public struct Status200: Model {
-        public var dateCreated: DateTime
+        public var dateCreated: Date
 
         public var id: String
 
         public var message: String?
 
-        public init(dateCreated: DateTime, id: String, message: String?) {
+        public init(dateCreated: Date, id: String, message: String?) {
           self.dateCreated = dateCreated
           self.id = id
           self.message = message
@@ -123,7 +123,7 @@ public extension Releases {
         case 200: self = try .status200(decoder.decode([Status200].self, from: data))
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

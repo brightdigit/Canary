@@ -4,9 +4,9 @@ import Prch
 public extension SCIM {
   /** Delete a team with a SCIM Group DELETE Request. */
   enum DeleteAnIndividualTeam {
-    public static let service = APIService<Response>(id: "Delete an Individual Team", tag: "SCIM", method: "DELETE", path: "/api/0/organizations/{organization_slug}/scim/v2/Groups/{team_id}", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team: admin"])])
+    public static let service = Service<Response>(id: "Delete an Individual Team", tag: "SCIM", method: "DELETE", path: "/api/0/organizations/{organization_slug}/scim/v2/Groups/{team_id}", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team: admin"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization. */
         public var organizationSlug: String
@@ -38,7 +38,7 @@ public extension SCIM {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -85,7 +85,7 @@ public extension SCIM {
         switch statusCode {
         case 204: self = .status204
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

@@ -4,9 +4,9 @@ import Prch
 public extension Releases {
   /** Update an organization release file. */
   enum UpdateAnOrganizationReleaseFile {
-    public static let service = APIService<Response>(id: "Update an Organization Release File", tag: "Releases", method: "PUT", path: "/api/0/organizations/{organization_slug}/releases/{version}/files/{file_id}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
+    public static let service = Service<Response>(id: "Update an Organization Release File", tag: "Releases", method: "PUT", path: "/api/0/organizations/{organization_slug}/releases/{version}/files/{file_id}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       /** Update an organization release file. */
       public struct Body: Model {
         /** The new name of the dist. */
@@ -75,7 +75,7 @@ public extension Releases {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -91,7 +91,7 @@ public extension Releases {
 
         public var name: String
 
-        public var dateCreated: DateTime
+        public var dateCreated: Date
 
         public var headers: [String: AnyCodable]
 
@@ -99,7 +99,7 @@ public extension Releases {
 
         public var size: Int
 
-        public init(sha1: String, dist: String?, name: String, dateCreated: DateTime, headers: [String: AnyCodable], id: String, size: Int) {
+        public init(sha1: String, dist: String?, name: String, dateCreated: Date, headers: [String: AnyCodable], id: String, size: Int) {
           self.sha1 = sha1
           self.dist = dist
           self.name = name
@@ -180,7 +180,7 @@ public extension Releases {
         case 200: self = try .status200(decoder.decode(Status200.self, from: data))
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

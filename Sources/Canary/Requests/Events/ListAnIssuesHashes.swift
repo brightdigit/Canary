@@ -19,9 +19,9 @@ import Prch
   public extension Events {
     /** This endpoint lists an issue's hashes, which are the generated checksums used to aggregate individual events. */
     enum ListAnIssuesHashes {
-      public static let service = APIService<Response>(id: "List an Issue's Hashes", tag: "Events", method: "GET", path: "/api/0/issues/{issue_id}/hashes/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:read"])])
+      public static let service = Service<Response>(id: "List an Issue's Hashes", tag: "Events", method: "GET", path: "/api/0/issues/{issue_id}/hashes/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:read"])])
 
-      public final class Request: APIRequest<Response, CanaryAPI> {
+      public final class Request: DeprecatedRequest<Response, CanaryAPI> {
         public struct Options {
           /** The ID of the issue to retrieve. */
           public var issueId: String
@@ -61,7 +61,7 @@ import Prch
         }
       }
 
-      public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
         public var failure: FailureType? {
           successful ? nil : ()
         }
@@ -472,7 +472,7 @@ import Prch
           switch statusCode {
           case 200: self = try .status200(decoder.decode([Status200].self, from: data))
           case 403: self = .status403
-          default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+          default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
           }
         }
 

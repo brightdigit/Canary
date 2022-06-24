@@ -4,9 +4,9 @@ import Prch
 public extension Releases {
   /** Upload a new organization release file. */
   enum UploadaNewOrganizationReleaseFile {
-    public static let service = APIService<Response>(id: "Upload a New Organization Release File", tag: "Releases", method: "POST", path: "/api/0/organizations/{organization_slug}/releases/{version}/files/", hasBody: true, isUpload: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
+    public static let service = Service<Response>(id: "Upload a New Organization Release File", tag: "Releases", method: "POST", path: "/api/0/organizations/{organization_slug}/releases/{version}/files/", hasBody: true, isUpload: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization. */
         public var organizationSlug: String
@@ -69,7 +69,7 @@ public extension Releases {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -122,7 +122,7 @@ public extension Releases {
         case 201: self = .status201
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

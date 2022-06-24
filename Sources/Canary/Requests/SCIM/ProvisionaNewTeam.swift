@@ -4,9 +4,9 @@ import Prch
 public extension SCIM {
   /** Create a new team bound to an organization via a SCIM Groups POST Request. Note that teams are always created with an empty member set. The endpoint will also do a normalization of uppercase / spaces to lowercase and dashes. */
   enum ProvisionaNewTeam {
-    public static let service = APIService<Response>(id: "Provision a New Team", tag: "SCIM", method: "POST", path: "/api/0/organizations/{organization_slug}/scim/v2/Groups", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:write"])])
+    public static let service = Service<Response>(id: "Provision a New Team", tag: "SCIM", method: "POST", path: "/api/0/organizations/{organization_slug}/scim/v2/Groups", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:write"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       /** Create a new team bound to an organization via a SCIM Groups POST Request. Note that teams are always created with an empty member set. The endpoint will also do a normalization of uppercase / spaces to lowercase and dashes. */
       public struct Body: Model {
         public var schemas: [String]
@@ -96,7 +96,7 @@ public extension SCIM {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -244,7 +244,7 @@ public extension SCIM {
         case 400: self = .status400
         case 403: self = .status403
         case 409: self = .status409
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

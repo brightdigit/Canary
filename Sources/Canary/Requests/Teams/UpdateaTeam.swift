@@ -4,9 +4,9 @@ import Prch
 public extension Teams {
   /** Update various attributes and configurable settings for the given team. */
   enum UpdateaTeam {
-    public static let service = APIService<Response>(id: "Update a Team", tag: "Teams", method: "PUT", path: "/api/0/teams/{organization_slug}/{team_slug}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:write"])])
+    public static let service = Service<Response>(id: "Update a Team", tag: "Teams", method: "PUT", path: "/api/0/teams/{organization_slug}/{team_slug}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:write"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       /** Update various attributes and configurable settings for the given team. */
       public struct Body: Model {
         /** The new name for the team. */
@@ -71,7 +71,7 @@ public extension Teams {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -83,7 +83,7 @@ public extension Teams {
       public struct Status200: Model {
         public var avatar: Avatar
 
-        public var dateCreated: DateTime
+        public var dateCreated: Date
 
         public var hasAccess: Bool
 
@@ -125,7 +125,7 @@ public extension Teams {
           }
         }
 
-        public init(avatar: Avatar, dateCreated: DateTime, hasAccess: Bool, id: String, isMember: Bool, isPending: Bool, memberCount: Int, name: String, slug: String) {
+        public init(avatar: Avatar, dateCreated: Date, hasAccess: Bool, id: String, isMember: Bool, isPending: Bool, memberCount: Int, name: String, slug: String) {
           self.avatar = avatar
           self.dateCreated = dateCreated
           self.hasAccess = hasAccess
@@ -218,7 +218,7 @@ public extension Teams {
         case 400: self = .status400
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

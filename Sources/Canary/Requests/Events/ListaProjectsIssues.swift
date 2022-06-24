@@ -6,9 +6,9 @@ public extension Events {
     A default query of ``is:unresolved`` is applied. To return results with other statuses send an new query value (i.e. ``?query=`` for all results).
    The ``statsPeriod`` parameter can be used to select the timeline stats which should be present. Possible values are: ``""`` (disable),``"24h"``, ``"14d"`` */
   enum ListaProjectsIssues {
-    public static let service = APIService<Response>(id: "List a Project's Issues", tag: "Events", method: "GET", path: "/api/0/projects/{organization_slug}/{project_slug}/issues/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
+    public static let service = Service<Response>(id: "List a Project's Issues", tag: "Events", method: "GET", path: "/api/0/projects/{organization_slug}/{project_slug}/issues/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization the issues belong to. */
         public var organizationSlug: String
@@ -73,7 +73,7 @@ public extension Events {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -334,7 +334,7 @@ public extension Events {
         switch statusCode {
         case 200: self = try .status200(decoder.decode([Status200].self, from: data))
         case 403: self = .status403
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

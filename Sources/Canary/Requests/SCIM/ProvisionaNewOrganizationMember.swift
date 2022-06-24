@@ -4,9 +4,9 @@ import Prch
 public extension SCIM {
   /** Create a new Organization Member via a SCIM Users POST Request. `userName` should be set to the SAML field used for email, and active should be set to `true`. Sentry's SCIM API doesn't currently support setting users to inactive and the member will be deleted if inactive is set to `false`. The API also does not support setting secondary emails. */
   enum ProvisionaNewOrganizationMember {
-    public static let service = APIService<Response>(id: "Provision a New Organization Member", tag: "SCIM", method: "POST", path: "/api/0/organizations/{organization_slug}/scim/v2/Users", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["member:write"])])
+    public static let service = Service<Response>(id: "Provision a New Organization Member", tag: "SCIM", method: "POST", path: "/api/0/organizations/{organization_slug}/scim/v2/Users", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["member:write"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       /** Create a new Organization Member via a SCIM Users POST Request. `userName` should be set to the SAML field used for email, and active should be set to `true`. Sentry's SCIM API doesn't currently support setting users to inactive and the member will be deleted if inactive is set to `false`. The API also does not support setting secondary emails. */
       public struct Body: Model {
         public var schemas: [String]
@@ -121,7 +121,7 @@ public extension SCIM {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -310,7 +310,7 @@ public extension SCIM {
         case 400: self = .status400
         case 403: self = .status403
         case 409: self = .status409
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

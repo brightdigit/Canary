@@ -4,9 +4,9 @@ import Prch
 public extension Releases {
   /** Return a list of deploys for a given release. */
   enum ListaReleasesDeploys {
-    public static let service = APIService<Response>(id: "List a Release's Deploys", tag: "Releases", method: "GET", path: "/api/0/organizations/{organization_slug}/releases/{version}/deploys/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
+    public static let service = Service<Response>(id: "List a Release's Deploys", tag: "Releases", method: "GET", path: "/api/0/organizations/{organization_slug}/releases/{version}/deploys/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization. */
         public var organizationSlug: String
@@ -38,7 +38,7 @@ public extension Releases {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -52,15 +52,15 @@ public extension Releases {
 
         public var name: String?
 
-        public var dateStarted: DateTime?
+        public var dateStarted: Date?
 
-        public var dateFinished: DateTime
+        public var dateFinished: Date
 
         public var url: String?
 
         public var id: String
 
-        public init(environment: String, name: String?, dateStarted: DateTime?, dateFinished: DateTime, url: String?, id: String) {
+        public init(environment: String, name: String?, dateStarted: Date?, dateFinished: Date, url: String?, id: String) {
           self.environment = environment
           self.name = name
           self.dateStarted = dateStarted
@@ -138,7 +138,7 @@ public extension Releases {
         case 200: self = try .status200(decoder.decode([Status200].self, from: data))
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

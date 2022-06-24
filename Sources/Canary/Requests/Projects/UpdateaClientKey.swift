@@ -4,9 +4,9 @@ import Prch
 public extension Projects {
   /** Update a client key.  This can be used to rename a key. */
   enum UpdateaClientKey {
-    public static let service = APIService<Response>(id: "Update a Client Key", tag: "Projects", method: "PUT", path: "/api/0/projects/{organization_slug}/{project_slug}/keys/{key_id}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
+    public static let service = Service<Response>(id: "Update a Client Key", tag: "Projects", method: "PUT", path: "/api/0/projects/{organization_slug}/{project_slug}/keys/{key_id}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       /** Update a client key.  This can be used to rename a key. */
       public struct Body: Model {
         /** The new name for the client key. */
@@ -69,7 +69,7 @@ public extension Projects {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -272,7 +272,7 @@ public extension Projects {
         case 400: self = .status400
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

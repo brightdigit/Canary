@@ -4,9 +4,9 @@ import Prch
 public extension Events {
   /** Updates an individual issue's attributes.  Only the attributes submitted are modified. */
   enum UpdateAnIssue {
-    public static let service = APIService<Response>(id: "Update an Issue", tag: "Events", method: "PUT", path: "/api/0/issues/{issue_id}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:write"])])
+    public static let service = Service<Response>(id: "Update an Issue", tag: "Events", method: "PUT", path: "/api/0/issues/{issue_id}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:write"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       /** Updates an individual issue's attributes.  Only the attributes submitted are modified. */
       public struct Body: Model {
         /** The actor id (or username) of the user or team that should be assigned to this issue. */
@@ -90,7 +90,7 @@ public extension Events {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -323,7 +323,7 @@ public extension Events {
         case 200: self = try .status200(decoder.decode(Status200.self, from: data))
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

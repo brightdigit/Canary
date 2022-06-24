@@ -4,9 +4,9 @@ import Prch
 public extension Integration {
   /** Return a list of integration platform installations for a given organization. */
   enum ListAnOrganizationsIntegrationPlatformInstallations {
-    public static let service = APIService<Response>(id: "List an Organization's Integration Platform Installations", tag: "Integration", method: "GET", path: "/api/0/organizations/{organization_slug}/sentry-app-installations/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org:read", "org:integrations"])])
+    public static let service = Service<Response>(id: "List an Organization's Integration Platform Installations", tag: "Integration", method: "GET", path: "/api/0/organizations/{organization_slug}/sentry-app-installations/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org:read", "org:integrations"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** The organization short name. */
         public var organizationSlug: String
@@ -34,7 +34,7 @@ public extension Integration {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -171,7 +171,7 @@ public extension Integration {
         case 200: self = try .status200(decoder.decode([Status200].self, from: data))
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

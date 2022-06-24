@@ -9,9 +9,9 @@ public extension Releases {
    Releases are also necessary for source maps and other debug features
    that require manual upload for functioning well. */
   enum CreateaNewReleaseForAnOrganization {
-    public static let service = APIService<Response>(id: "Create a New Release for an Organization", tag: "Releases", method: "POST", path: "/api/0/organizations/{organization_slug}/releases/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
+    public static let service = Service<Response>(id: "Create a New Release for an Organization", tag: "Releases", method: "POST", path: "/api/0/organizations/{organization_slug}/releases/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       /** Create a new release for the given organization.  Releases are used by
        Sentry to improve its error reporting abilities by correlating
        first seen events with the release that might have introduced the
@@ -29,7 +29,7 @@ public extension Releases {
         public var commits: [Commits]?
 
         /** An optional date that indicates when the release went live. If not provided the current time is assumed. */
-        public var dateReleased: DateTime?
+        public var dateReleased: Date?
 
         /** An optional commit reference. This is useful if a tagged version has been provided. */
         public var ref: String?
@@ -66,7 +66,7 @@ public extension Releases {
           public var repository: String?
 
           /** The commit timestamp is used to sort the commits given. If a timestamp is not included, the commits will remain sorted in the order given. */
-          public var timestamp: DateTime?
+          public var timestamp: Date?
 
           /** Create a new release for the given organization.  Releases are used by
            Sentry to improve its error reporting abilities by correlating
@@ -108,7 +108,7 @@ public extension Releases {
             }
           }
 
-          public init(authorEmail: String? = nil, authorName: String? = nil, id: String? = nil, message: String? = nil, patchSet: [PatchSet]? = nil, repository: String? = nil, timestamp: DateTime? = nil) {
+          public init(authorEmail: String? = nil, authorName: String? = nil, id: String? = nil, message: String? = nil, patchSet: [PatchSet]? = nil, repository: String? = nil, timestamp: Date? = nil) {
             self.authorEmail = authorEmail
             self.authorName = authorName
             self.id = id
@@ -182,7 +182,7 @@ public extension Releases {
           }
         }
 
-        public init(version: String, projects: [String], commits: [Commits]? = nil, dateReleased: DateTime? = nil, ref: String? = nil, refs: [Refs]? = nil, url: String? = nil) {
+        public init(version: String, projects: [String], commits: [Commits]? = nil, dateReleased: Date? = nil, ref: String? = nil, refs: [Refs]? = nil, url: String? = nil) {
           self.version = version
           self.projects = projects
           self.commits = commits
@@ -249,7 +249,7 @@ public extension Releases {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -270,19 +270,19 @@ public extension Releases {
 
         public var data: [String: AnyCodable]
 
-        public var dateCreated: DateTime
+        public var dateCreated: Date
 
-        public var dateReleased: DateTime?
+        public var dateReleased: Date?
 
         public var deployCount: Int
 
-        public var firstEvent: DateTime?
+        public var firstEvent: Date?
 
         public var lastCommit: [String: AnyCodable]?
 
         public var lastDeploy: [String: AnyCodable]?
 
-        public var lastEvent: DateTime?
+        public var lastEvent: Date?
 
         public var newGroups: Int
 
@@ -329,7 +329,7 @@ public extension Releases {
           }
         }
 
-        public init(authors: [[String: AnyCodable]], commitCount: Int, data: [String: AnyCodable], dateCreated: DateTime, dateReleased: DateTime?, deployCount: Int, firstEvent: DateTime?, lastCommit: [String: AnyCodable]?, lastDeploy: [String: AnyCodable]?, lastEvent: DateTime?, newGroups: Int, owner: [String: AnyCodable]?, projects: [Projects], ref: String?, shortVersion: String, version: String, url: String?) {
+        public init(authors: [[String: AnyCodable]], commitCount: Int, data: [String: AnyCodable], dateCreated: Date, dateReleased: Date?, deployCount: Int, firstEvent: Date?, lastCommit: [String: AnyCodable]?, lastDeploy: [String: AnyCodable]?, lastEvent: Date?, newGroups: Int, owner: [String: AnyCodable]?, projects: [Projects], ref: String?, shortVersion: String, version: String, url: String?) {
           self.authors = authors
           self.commitCount = commitCount
           self.data = data
@@ -440,7 +440,7 @@ public extension Releases {
         case 201: self = try .status201(decoder.decode(Status201.self, from: data))
         case 400: self = .status400
         case 403: self = .status403
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

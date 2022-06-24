@@ -9,7 +9,7 @@ public extension Organizations {
        Return a set of points representing a normalized timestamp and the number of events seen in the period.
        */
   enum RetrieveEventCountsForAnOrganization {
-    public static let service = APIService<Response>(id: "Retrieve Event Counts for an Organization", tag: "Organizations", method: "GET", path: "/api/0/organizations/{organization_slug}/stats/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
+    public static let service = Service<Response>(id: "Retrieve Event Counts for an Organization", tag: "Organizations", method: "GET", path: "/api/0/organizations/{organization_slug}/stats/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
 
     /** The name of the stat to query `("received", "rejected", "blacklisted")`. */
     public enum Stat: String, Codable, Equatable, CaseIterable {
@@ -25,7 +25,7 @@ public extension Organizations {
       case _1d = "1d"
     }
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization the event ID should be looked up in. */
         public var organizationSlug: String
@@ -34,15 +34,15 @@ public extension Organizations {
         public var stat: Stat?
 
         /** A timestamp to set the start of the query in seconds since UNIX epoch. */
-        public var since: DateTime?
+        public var since: Date?
 
         /** A timestamp to set the end of the query in seconds since UNIX epoch. */
-        public var until: DateTime?
+        public var until: Date?
 
         /** An explicit resolution to search for (one of `10s`, `1h`, and `1d`). */
         public var resolution: Resolution?
 
-        public init(organizationSlug: String, stat: Stat? = nil, since: DateTime? = nil, until: DateTime? = nil, resolution: Resolution? = nil) {
+        public init(organizationSlug: String, stat: Stat? = nil, since: Date? = nil, until: Date? = nil, resolution: Resolution? = nil) {
           self.organizationSlug = organizationSlug
           self.stat = stat
           self.since = since
@@ -59,7 +59,7 @@ public extension Organizations {
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, stat: Stat? = nil, since: DateTime? = nil, until: DateTime? = nil, resolution: Resolution? = nil) {
+      public convenience init(organizationSlug: String, stat: Stat? = nil, since: Date? = nil, until: Date? = nil, resolution: Resolution? = nil) {
         let options = Options(organizationSlug: organizationSlug, stat: stat, since: since, until: until, resolution: resolution)
         self.init(options: options)
       }
@@ -86,7 +86,7 @@ public extension Organizations {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -146,7 +146,7 @@ public extension Organizations {
         case 401: self = .status401
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

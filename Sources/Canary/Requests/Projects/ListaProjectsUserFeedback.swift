@@ -4,9 +4,9 @@ import Prch
 public extension Projects {
   /** Return a list of user feedback items within this project. */
   enum ListaProjectsUserFeedback {
-    public static let service = APIService<Response>(id: "List a Project's User Feedback", tag: "Projects", method: "GET", path: "/api/0/projects/{organization_slug}/{project_slug}/user-feedback/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
+    public static let service = Service<Response>(id: "List a Project's User Feedback", tag: "Projects", method: "GET", path: "/api/0/projects/{organization_slug}/{project_slug}/user-feedback/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization. */
         public var organizationSlug: String
@@ -38,7 +38,7 @@ public extension Projects {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -179,7 +179,7 @@ public extension Projects {
         case 200: self = try .status200(decoder.decode([Status200].self, from: data))
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

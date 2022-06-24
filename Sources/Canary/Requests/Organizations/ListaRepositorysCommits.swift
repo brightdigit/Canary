@@ -4,9 +4,9 @@ import Prch
 public extension Organizations {
   /** Return a list of commits for a given repository. */
   enum ListaRepositorysCommits {
-    public static let service = APIService<Response>(id: "List a Repository's Commits", tag: "Organizations", method: "GET", path: "/api/0/organizations/{organization_slug}/repos/{repo_id}/commits/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
+    public static let service = Service<Response>(id: "List a Repository's Commits", tag: "Organizations", method: "GET", path: "/api/0/organizations/{organization_slug}/repos/{repo_id}/commits/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** The organization short name. */
         public var organizationSlug: String
@@ -38,7 +38,7 @@ public extension Organizations {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -48,13 +48,13 @@ public extension Organizations {
       public typealias APIType = CanaryAPI
       /** Return a list of commits for a given repository. */
       public struct Status200: Model {
-        public var dateCreated: DateTime
+        public var dateCreated: Date
 
         public var id: String
 
         public var message: String?
 
-        public init(dateCreated: DateTime, id: String, message: String?) {
+        public init(dateCreated: Date, id: String, message: String?) {
           self.dateCreated = dateCreated
           self.id = id
           self.message = message
@@ -129,7 +129,7 @@ public extension Organizations {
         case 401: self = .status401
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

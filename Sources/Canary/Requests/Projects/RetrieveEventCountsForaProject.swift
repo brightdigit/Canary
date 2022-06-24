@@ -11,7 +11,7 @@ public extension Projects {
    Query ranges are limited to Sentry's configured time-series resolutions.
        */
   enum RetrieveEventCountsForaProject {
-    public static let service = APIService<Response>(id: "Retrieve Event Counts for a Project", tag: "Projects", method: "GET", path: "/api/0/projects/{organization_slug}/{project_slug}/stats/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
+    public static let service = Service<Response>(id: "Retrieve Event Counts for a Project", tag: "Projects", method: "GET", path: "/api/0/projects/{organization_slug}/{project_slug}/stats/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
 
     /** The name of the stat to query `("received", "rejected", "blacklisted", "generated")`. */
     public enum Stat: String, Codable, Equatable, CaseIterable {
@@ -28,7 +28,7 @@ public extension Projects {
       case _1d = "1d"
     }
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization. */
         public var organizationSlug: String
@@ -40,15 +40,15 @@ public extension Projects {
         public var stat: Stat?
 
         /** A timestamp to set the start of the query in seconds since UNIX epoch. */
-        public var since: DateTime?
+        public var since: Date?
 
         /** A timestamp to set the end of the query in seconds since UNIX epoch. */
-        public var until: DateTime?
+        public var until: Date?
 
         /** An explicit resolution to search for (one of `10s`, `1h`, and `1d`). */
         public var resolution: Resolution?
 
-        public init(organizationSlug: String, projectSlug: String, stat: Stat? = nil, since: DateTime? = nil, until: DateTime? = nil, resolution: Resolution? = nil) {
+        public init(organizationSlug: String, projectSlug: String, stat: Stat? = nil, since: Date? = nil, until: Date? = nil, resolution: Resolution? = nil) {
           self.organizationSlug = organizationSlug
           self.projectSlug = projectSlug
           self.stat = stat
@@ -66,7 +66,7 @@ public extension Projects {
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, projectSlug: String, stat: Stat? = nil, since: DateTime? = nil, until: DateTime? = nil, resolution: Resolution? = nil) {
+      public convenience init(organizationSlug: String, projectSlug: String, stat: Stat? = nil, since: Date? = nil, until: Date? = nil, resolution: Resolution? = nil) {
         let options = Options(organizationSlug: organizationSlug, projectSlug: projectSlug, stat: stat, since: since, until: until, resolution: resolution)
         self.init(options: options)
       }
@@ -93,7 +93,7 @@ public extension Projects {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -141,7 +141,7 @@ public extension Projects {
         switch statusCode {
         case 200: self = try .status200(decoder.decode([[Int]].self, from: data))
         case 403: self = .status403
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

@@ -4,9 +4,9 @@ import Prch
 public extension Organizations {
   /** Return a list of projects bound to a organization. */
   enum ListAnOrganizationsProjects {
-    public static let service = APIService<Response>(id: "List an Organization's Projects", tag: "Organizations", method: "GET", path: "/api/0/organizations/{organization_slug}/projects/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
+    public static let service = Service<Response>(id: "List an Organization's Projects", tag: "Organizations", method: "GET", path: "/api/0/organizations/{organization_slug}/projects/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization for which the projects should be listed. */
         public var organizationSlug: String
@@ -46,7 +46,7 @@ public extension Organizations {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -218,7 +218,7 @@ public extension Organizations {
         case 401: self = .status401
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

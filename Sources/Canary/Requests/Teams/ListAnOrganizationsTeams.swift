@@ -4,9 +4,9 @@ import Prch
 public extension Teams {
   /** Returns a list of teams bound to a organization. */
   enum ListAnOrganizationsTeams {
-    public static let service = APIService<Response>(id: "List an Organization's Teams", tag: "Teams", method: "GET", path: "/api/0/organizations/{organization_slug}/teams/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:read"])])
+    public static let service = Service<Response>(id: "List an Organization's Teams", tag: "Teams", method: "GET", path: "/api/0/organizations/{organization_slug}/teams/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:read"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization for which the teams should be listed. */
         public var organizationSlug: String
@@ -46,7 +46,7 @@ public extension Teams {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -58,7 +58,7 @@ public extension Teams {
       public struct Status200: Model {
         public var avatar: Avatar
 
-        public var dateCreated: DateTime
+        public var dateCreated: Date
 
         public var hasAccess: Bool
 
@@ -116,7 +116,7 @@ public extension Teams {
 
           public var color: String
 
-          public var dateCreated: DateTime
+          public var dateCreated: Date
 
           public var features: [String]
 
@@ -168,7 +168,7 @@ public extension Teams {
             }
           }
 
-          public init(avatar: Avatar, color: String, dateCreated: DateTime, features: [String], firstEvent: String?, hasAccess: Bool, id: String, isBookmarked: Bool, isInternal: Bool, isMember: Bool, isPublic: Bool, name: String, platform: String?, slug: String, status: Status) {
+          public init(avatar: Avatar, color: String, dateCreated: Date, features: [String], firstEvent: String?, hasAccess: Bool, id: String, isBookmarked: Bool, isInternal: Bool, isMember: Bool, isPublic: Bool, name: String, platform: String?, slug: String, status: Status) {
             self.avatar = avatar
             self.color = color
             self.dateCreated = dateCreated
@@ -227,7 +227,7 @@ public extension Teams {
           }
         }
 
-        public init(avatar: Avatar, dateCreated: DateTime, hasAccess: Bool, id: String, isMember: Bool, isPending: Bool, memberCount: Int, name: String, projects: [Projects], slug: String) {
+        public init(avatar: Avatar, dateCreated: Date, hasAccess: Bool, id: String, isMember: Bool, isPending: Bool, memberCount: Int, name: String, projects: [Projects], slug: String) {
           self.avatar = avatar
           self.dateCreated = dateCreated
           self.hasAccess = hasAccess
@@ -323,7 +323,7 @@ public extension Teams {
         case 401: self = .status401
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

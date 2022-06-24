@@ -5,9 +5,9 @@ public extension SCIM {
   /** Query an individual team with a SCIM Group GET Request.
    - Note that the members field will only contain up to 10000 members. */
   enum QueryAnIndividualTeam {
-    public static let service = APIService<Response>(id: "Query an Individual Team", tag: "SCIM", method: "GET", path: "/api/0/organizations/{organization_slug}/scim/v2/Groups/{team_id}", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team: read"])])
+    public static let service = Service<Response>(id: "Query an Individual Team", tag: "SCIM", method: "GET", path: "/api/0/organizations/{organization_slug}/scim/v2/Groups/{team_id}", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team: read"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization. */
         public var organizationSlug: String
@@ -39,7 +39,7 @@ public extension SCIM {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -184,7 +184,7 @@ public extension SCIM {
         case 200: self = try .status200(decoder.decode(Status200.self, from: data))
         case 401: self = .status401
         case 403: self = .status403
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

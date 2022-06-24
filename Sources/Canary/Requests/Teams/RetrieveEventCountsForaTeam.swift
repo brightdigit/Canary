@@ -9,7 +9,7 @@ public extension Teams {
    Query ranges are limited to Sentry’s configured time-series resolutions.
        */
   enum RetrieveEventCountsForaTeam {
-    public static let service = APIService<Response>(id: "Retrieve Event Counts for a Team", tag: "Teams", method: "GET", path: "/api/0/teams/{organization_slug}/{team_slug}/stats/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:read"])])
+    public static let service = Service<Response>(id: "Retrieve Event Counts for a Team", tag: "Teams", method: "GET", path: "/api/0/teams/{organization_slug}/{team_slug}/stats/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:read"])])
 
     /** The name of the stat to query `("received", "rejected")`. */
     public enum Stat: String, Codable, Equatable, CaseIterable {
@@ -24,7 +24,7 @@ public extension Teams {
       case _1d = "1d"
     }
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization the team belongs to. */
         public var organizationSlug: String
@@ -36,15 +36,15 @@ public extension Teams {
         public var stat: Stat?
 
         /** A timestamp to set the start of the query in seconds since UNIX epoch. */
-        public var since: DateTime?
+        public var since: Date?
 
         /** A timestamp to set the end of the query in seconds since UNIX epoch. */
-        public var until: DateTime?
+        public var until: Date?
 
         /** An explicit resolution to search for (one of `10s`, `1h`, and `1d`). */
         public var resolution: Resolution?
 
-        public init(organizationSlug: String, teamSlug: String, stat: Stat? = nil, since: DateTime? = nil, until: DateTime? = nil, resolution: Resolution? = nil) {
+        public init(organizationSlug: String, teamSlug: String, stat: Stat? = nil, since: Date? = nil, until: Date? = nil, resolution: Resolution? = nil) {
           self.organizationSlug = organizationSlug
           self.teamSlug = teamSlug
           self.stat = stat
@@ -62,7 +62,7 @@ public extension Teams {
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, teamSlug: String, stat: Stat? = nil, since: DateTime? = nil, until: DateTime? = nil, resolution: Resolution? = nil) {
+      public convenience init(organizationSlug: String, teamSlug: String, stat: Stat? = nil, since: Date? = nil, until: Date? = nil, resolution: Resolution? = nil) {
         let options = Options(organizationSlug: organizationSlug, teamSlug: teamSlug, stat: stat, since: since, until: until, resolution: resolution)
         self.init(options: options)
       }
@@ -89,7 +89,7 @@ public extension Teams {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -143,7 +143,7 @@ public extension Teams {
         case 200: self = try .status200(decoder.decode([[Int]].self, from: data))
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

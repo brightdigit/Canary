@@ -4,9 +4,9 @@ import Prch
 public extension Releases {
   /** Return a list of releases for a given organization. */
   enum ListAnOrganizationsReleases {
-    public static let service = APIService<Response>(id: "List an Organization's Releases", tag: "Releases", method: "GET", path: "/api/0/organizations/{organization_slug}/releases/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
+    public static let service = Service<Response>(id: "List an Organization's Releases", tag: "Releases", method: "GET", path: "/api/0/organizations/{organization_slug}/releases/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** The slug of the organization. */
         public var organizationSlug: String
@@ -46,7 +46,7 @@ public extension Releases {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -62,19 +62,19 @@ public extension Releases {
 
         public var data: [String: AnyCodable]
 
-        public var dateCreated: DateTime
+        public var dateCreated: Date
 
-        public var dateReleased: DateTime?
+        public var dateReleased: Date?
 
         public var deployCount: Int
 
-        public var firstEvent: DateTime?
+        public var firstEvent: Date?
 
         public var lastCommit: [String: AnyCodable]?
 
         public var lastDeploy: [String: AnyCodable]?
 
-        public var lastEvent: DateTime?
+        public var lastEvent: Date?
 
         public var newGroups: Int
 
@@ -116,7 +116,7 @@ public extension Releases {
           }
         }
 
-        public init(authors: [[String: AnyCodable]], commitCount: Int, data: [String: AnyCodable], dateCreated: DateTime, dateReleased: DateTime?, deployCount: Int, firstEvent: DateTime?, lastCommit: [String: AnyCodable]?, lastDeploy: [String: AnyCodable]?, lastEvent: DateTime?, newGroups: Int, owner: [String: AnyCodable]?, projects: [Projects], ref: String?, shortVersion: String, version: String, url: String?) {
+        public init(authors: [[String: AnyCodable]], commitCount: Int, data: [String: AnyCodable], dateCreated: Date, dateReleased: Date?, deployCount: Int, firstEvent: Date?, lastCommit: [String: AnyCodable]?, lastDeploy: [String: AnyCodable]?, lastEvent: Date?, newGroups: Int, owner: [String: AnyCodable]?, projects: [Projects], ref: String?, shortVersion: String, version: String, url: String?) {
           self.authors = authors
           self.commitCount = commitCount
           self.data = data
@@ -233,7 +233,7 @@ public extension Releases {
         case 401: self = .status401
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

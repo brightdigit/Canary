@@ -4,19 +4,19 @@ import Prch
 public extension Releases {
   /** Create a deploy. */
   enum CreateaNewDeployForAnOrganization {
-    public static let service = APIService<Response>(id: "Create a New Deploy for an Organization", tag: "Releases", method: "POST", path: "/api/0/organizations/{organization_slug}/releases/{version}/deploys/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
+    public static let service = Service<Response>(id: "Create a New Deploy for an Organization", tag: "Releases", method: "POST", path: "/api/0/organizations/{organization_slug}/releases/{version}/deploys/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       /** Create a deploy. */
       public struct Body: Model {
         /** The environment you're deploying to. */
         public var environment: String
 
         /** An optional date that indicates when the deploy ended. If not provided, the current time is used. */
-        public var dateFinished: DateTime?
+        public var dateFinished: Date?
 
         /** An optional date that indicates when the deploy started. */
-        public var dateStarted: DateTime?
+        public var dateStarted: Date?
 
         /** The optional name of the deploy. */
         public var name: String?
@@ -24,7 +24,7 @@ public extension Releases {
         /** The optional URL that points to the deploy. */
         public var url: String?
 
-        public init(environment: String, dateFinished: DateTime? = nil, dateStarted: DateTime? = nil, name: String? = nil, url: String? = nil) {
+        public init(environment: String, dateFinished: Date? = nil, dateStarted: Date? = nil, name: String? = nil, url: String? = nil) {
           self.environment = environment
           self.dateFinished = dateFinished
           self.dateStarted = dateStarted
@@ -89,7 +89,7 @@ public extension Releases {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -103,15 +103,15 @@ public extension Releases {
 
         public var name: String?
 
-        public var dateStarted: DateTime?
+        public var dateStarted: Date?
 
-        public var dateFinished: DateTime
+        public var dateFinished: Date
 
         public var url: String?
 
         public var id: String
 
-        public init(environment: String, name: String?, dateStarted: DateTime?, dateFinished: DateTime, url: String?, id: String) {
+        public init(environment: String, name: String?, dateStarted: Date?, dateFinished: Date, url: String?, id: String) {
           self.environment = environment
           self.name = name
           self.dateStarted = dateStarted
@@ -195,7 +195,7 @@ public extension Releases {
         case 208: self = .status208
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

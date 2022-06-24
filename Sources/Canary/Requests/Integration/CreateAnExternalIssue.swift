@@ -4,9 +4,9 @@ import Prch
 public extension Integration {
   /** Create an external issue from an integration platform integration. */
   enum CreateAnExternalIssue {
-    public static let service = APIService<Response>(id: "Create an External Issue", tag: "Integration", method: "POST", path: "/api/0/sentry-app-installations/{uuid}/external-issues/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:write"])])
+    public static let service = Service<Response>(id: "Create an External Issue", tag: "Integration", method: "POST", path: "/api/0/sentry-app-installations/{uuid}/external-issues/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:write"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       /** Create an external issue from an integration platform integration. */
       public struct Body: Model {
         /** The ID of the Sentry issue to link the external issue to. */
@@ -79,7 +79,7 @@ public extension Integration {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -174,7 +174,7 @@ public extension Integration {
         case 200: self = try .status200(decoder.decode(Status200.self, from: data))
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

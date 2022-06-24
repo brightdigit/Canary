@@ -5,9 +5,9 @@ public extension Events {
   /** Returns details for given tag key related to an issue.
    When [paginated](/api/pagination) can return at most 1000 values. */
   enum ListaTagsValuesRelatedToAnIssue {
-    public static let service = APIService<Response>(id: "List a Tag's Values Related to an Issue", tag: "Events", method: "GET", path: "/api/0/issues/{issue_id}/tags/{key}/values/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:read"])])
+    public static let service = Service<Response>(id: "List a Tag's Values Related to an Issue", tag: "Events", method: "GET", path: "/api/0/issues/{issue_id}/tags/{key}/values/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:read"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public final class Request: DeprecatedRequest<Response, CanaryAPI> {
       public struct Options {
         /** The ID of the issue to retrieve. */
         public var issueId: String
@@ -39,7 +39,7 @@ public extension Events {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -114,7 +114,7 @@ public extension Events {
         switch statusCode {
         case 200: self = try .status200(decoder.decode([Status200].self, from: data))
         case 403: self = .status403
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 
