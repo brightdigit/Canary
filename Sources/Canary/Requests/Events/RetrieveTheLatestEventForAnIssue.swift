@@ -5,9 +5,9 @@ import Prch
   public extension Events {
     /** Retrieves the details of the latest event for an issue. */
     enum RetrieveTheLatestEventForAnIssue {
-      public static let service = APIService<Response>(id: "Retrieve the Latest Event for an Issue", tag: "Events", method: "GET", path: "/api/0/issues/{issue_id}/events/latest/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:read"])])
+      public static let service = Service<Response>(id: "Retrieve the Latest Event for an Issue", tag: "Events", method: "GET", path: "/api/0/issues/{issue_id}/events/latest/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:read"])])
 
-      public final class Request: APIRequest<Response, CanaryAPI> {
+      public struct Request: DeprecatedRequest<Response, CanaryAPI> {
         public struct Options {
           /** The ID of the issue. */
           public var issueId: String
@@ -21,21 +21,27 @@ import Prch
 
         public init(options: Options) {
           self.options = options
-          super.init(service: RetrieveTheLatestEventForAnIssue.service)
         }
 
         /// convenience initialiser so an Option doesn't have to be created
-        public convenience init(issueId: String) {
+        public init(issueId: String) {
           let options = Options(issueId: issueId)
           self.init(options: options)
         }
 
-        override public var path: String {
-          super.path.replacingOccurrences(of: "{" + "issue_id" + "}", with: "\(options.issueId)")
+        public var path: String {
+          service.path.replacingOccurrences(of: "{" + "issue_id" + "}", with: "\(options.issueId)")
         }
       }
 
-      public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public enum Response: Prch.Response {
+        public var response: ClientResult<Status200, Void> {
+          switch self {
+          case let .status200(response):
+            return .success(response)
+          }
+        }
+
         public var failure: FailureType? {
           successful ? nil : ()
         }
@@ -440,7 +446,7 @@ import Prch
           switch statusCode {
           case 200: self = try .status200(decoder.decode(Status200.self, from: data))
           case 403: self = .status403
-          default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+          default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
           }
         }
 

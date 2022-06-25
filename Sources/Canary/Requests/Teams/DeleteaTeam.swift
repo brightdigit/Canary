@@ -5,9 +5,15 @@ public extension Teams {
   /** Schedules a team for deletion.
    Note: Deletion happens asynchronously and therefore is not immediate. However once deletion has begun the state of a project changes and will be hidden from most public views. */
   enum DeleteaTeam {
-    public static let service = APIService<Response>(id: "Delete a Team", tag: "Teams", method: "DELETE", path: "/api/0/teams/{organization_slug}/{team_slug}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:admin"])])
+    public static let service = Service<Response>(id: "Delete a Team", tag: "Teams", method: "DELETE", path: "/api/0/teams/{organization_slug}/{team_slug}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:admin"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        DeleteaTeam.service
+      }
+
       public struct Options {
         /** The slug of the organization the team belongs to. */
         public var organizationSlug: String
@@ -25,21 +31,30 @@ public extension Teams {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: DeleteaTeam.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, teamSlug: String) {
+      public init(organizationSlug: String, teamSlug: String) {
         let options = Options(organizationSlug: organizationSlug, teamSlug: teamSlug)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "team_slug" + "}", with: "\(options.teamSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "team_slug" + "}", with: "\(options.teamSlug)")
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Void, Void> {
+        switch self {
+        case .status204:
+          return .success(())
+
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -65,12 +80,6 @@ public extension Teams {
         }
       }
 
-      public var response: Any {
-        switch self {
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status204: return 204
@@ -92,7 +101,7 @@ public extension Teams {
         case 204: self = .status204
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

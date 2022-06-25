@@ -4,9 +4,15 @@ import Prch
 public extension SCIM {
   /** Update an organization member's attributes with a SCIM PATCH Request. The only supported attribute is `active`. After setting `active` to false Sentry will permanently delete the Organization Member. */
   enum UpdateAnOrganizationMembersAttributes {
-    public static let service = APIService<Response>(id: "Update an Organization Member's Attributes", tag: "SCIM", method: "PATCH", path: "/api/0/organizations/{organization_slug}/scim/v2/Users/{member_id}", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["member:write"])])
+    public static let service = Service<Response>(id: "Update an Organization Member's Attributes", tag: "SCIM", method: "PATCH", path: "/api/0/organizations/{organization_slug}/scim/v2/Users/{member_id}", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["member:write"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        UpdateAnOrganizationMembersAttributes.service
+      }
+
       /** Update an organization member's attributes with a SCIM PATCH Request. The only supported attribute is `active`. After setting `active` to false Sentry will permanently delete the Organization Member. */
       public struct Body: Model {
         public var schemas: [String]
@@ -50,26 +56,33 @@ public extension SCIM {
 
       public var body: Body
 
-      public init(body: Body, options: Options, encoder: RequestEncoder? = nil) {
+      public init(body: Body, options: Options, encoder _: RequestEncoder? = nil) {
         self.body = body
         self.options = options
-        super.init(service: UpdateAnOrganizationMembersAttributes.service) { defaultEncoder in
-          try (encoder ?? defaultEncoder).encode(body)
-        }
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, memberId: Int, body: Body) {
+      public init(organizationSlug: String, memberId: Int, body: Body) {
         let options = Options(organizationSlug: organizationSlug, memberId: memberId)
         self.init(body: body, options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "member_id" + "}", with: "\(options.memberId)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "member_id" + "}", with: "\(options.memberId)")
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Void, Void> {
+        switch self {
+        case .status204:
+          return .success(())
+
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -98,12 +111,6 @@ public extension SCIM {
         }
       }
 
-      public var response: Any {
-        switch self {
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status204: return 204
@@ -128,7 +135,7 @@ public extension SCIM {
         case 401: self = .status401
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

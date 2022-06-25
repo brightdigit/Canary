@@ -4,9 +4,15 @@ import Prch
 public extension Teams {
   /** Create a new project bound to a team. */
   enum CreateaNewProject {
-    public static let service = APIService<Response>(id: "Create a New Project", tag: "Teams", method: "POST", path: "/api/0/teams/{organization_slug}/{team_slug}/projects/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
+    public static let service = Service<Response>(id: "Create a New Project", tag: "Teams", method: "POST", path: "/api/0/teams/{organization_slug}/{team_slug}/projects/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        CreateaNewProject.service
+      }
+
       /** Create a new project bound to a team. */
       public struct Body: Model {
         /** The name for the new project. */
@@ -52,26 +58,33 @@ public extension Teams {
 
       public var body: Body
 
-      public init(body: Body, options: Options, encoder: RequestEncoder? = nil) {
+      public init(body: Body, options: Options, encoder _: RequestEncoder? = nil) {
         self.body = body
         self.options = options
-        super.init(service: CreateaNewProject.service) { defaultEncoder in
-          try (encoder ?? defaultEncoder).encode(body)
-        }
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, teamSlug: String, body: Body) {
+      public init(organizationSlug: String, teamSlug: String, body: Body) {
         let options = Options(organizationSlug: organizationSlug, teamSlug: teamSlug)
         self.init(body: body, options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "team_slug" + "}", with: "\(options.teamSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "team_slug" + "}", with: "\(options.teamSlug)")
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Status201, Void> {
+        switch self {
+        case let .status201(response):
+          return .success(response)
+
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -93,7 +106,7 @@ public extension Teams {
 
         public var color: String
 
-        public var dateCreated: DateTime
+        public var dateCreated: Date
 
         public var features: [String]
 
@@ -145,7 +158,7 @@ public extension Teams {
           }
         }
 
-        public init(avatar: Avatar, color: String, dateCreated: DateTime, features: [String], firstEvent: String?, hasAccess: Bool, id: String, isBookmarked: Bool, isInternal: Bool, isMember: Bool, isPublic: Bool, name: String, platform: String?, slug: String, status: Status) {
+        public init(avatar: Avatar, color: String, dateCreated: Date, features: [String], firstEvent: String?, hasAccess: Bool, id: String, isBookmarked: Bool, isInternal: Bool, isMember: Bool, isPublic: Bool, name: String, platform: String?, slug: String, status: Status) {
           self.avatar = avatar
           self.color = color
           self.dateCreated = dateCreated
@@ -228,13 +241,6 @@ public extension Teams {
         }
       }
 
-      public var response: Any {
-        switch self {
-        case let .status201(response): return response
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status201: return 201
@@ -262,7 +268,7 @@ public extension Teams {
         case 403: self = .status403
         case 404: self = .status404
         case 409: self = .status409
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

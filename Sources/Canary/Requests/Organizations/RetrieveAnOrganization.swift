@@ -4,9 +4,15 @@ import Prch
 public extension Organizations {
   /** Return details on an individual organization including various details such as membership access, features, and teams. */
   enum RetrieveAnOrganization {
-    public static let service = APIService<Response>(id: "Retrieve an Organization", tag: "Organizations", method: "GET", path: "/api/0/organizations/{organization_slug}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
+    public static let service = Service<Response>(id: "Retrieve an Organization", tag: "Organizations", method: "GET", path: "/api/0/organizations/{organization_slug}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        RetrieveAnOrganization.service
+      }
+
       public struct Options {
         /** The slug of the organization to look up. */
         public var organizationSlug: String
@@ -20,21 +26,30 @@ public extension Organizations {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: RetrieveAnOrganization.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String) {
+      public init(organizationSlug: String) {
         let options = Options(organizationSlug: organizationSlug)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)")
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Status200, Void> {
+        switch self {
+        case let .status200(response):
+          return .success(response)
+
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -56,7 +71,7 @@ public extension Organizations {
 
         public var dataScrubberDefaults: Bool
 
-        public var dateCreated: DateTime
+        public var dateCreated: Date
 
         public var defaultRole: String
 
@@ -298,7 +313,7 @@ public extension Organizations {
         public struct Teams: Model {
           public var avatar: Avatar
 
-          public var dateCreated: DateTime
+          public var dateCreated: Date
 
           public var hasAccess: Bool
 
@@ -340,7 +355,7 @@ public extension Organizations {
             }
           }
 
-          public init(avatar: Avatar, dateCreated: DateTime, hasAccess: Bool, id: String, isMember: Bool, isPending: Bool, memberCount: Int, name: String, slug: String) {
+          public init(avatar: Avatar, dateCreated: Date, hasAccess: Bool, id: String, isMember: Bool, isPending: Bool, memberCount: Int, name: String, slug: String) {
             self.avatar = avatar
             self.dateCreated = dateCreated
             self.hasAccess = hasAccess
@@ -381,7 +396,7 @@ public extension Organizations {
           }
         }
 
-        public init(access: [String], allowSharedIssues: Bool, availableRoles: [AvailableRoles], avatar: Avatar, dataScrubber: Bool, dataScrubberDefaults: Bool, dateCreated: DateTime, defaultRole: String, enhancedPrivacy: Bool, experiments: [String: AnyCodable], features: [String], id: String, isDefault: Bool, isEarlyAdopter: Bool, name: String, onboardingTasks: [[String: AnyCodable]], openMembership: Bool, pendingAccessRequests: Int, projects: [Projects], quota: [String: AnyCodable], require2FA: Bool, safeFields: [String], scrapeJavaScript: Bool, scrubIPAddresses: Bool, sensitiveFields: [String], slug: String, status: Status, storeCrashReports: Int, teams: [Teams], trustedRelays: [String]) {
+        public init(access: [String], allowSharedIssues: Bool, availableRoles: [AvailableRoles], avatar: Avatar, dataScrubber: Bool, dataScrubberDefaults: Bool, dateCreated: Date, defaultRole: String, enhancedPrivacy: Bool, experiments: [String: AnyCodable], features: [String], id: String, isDefault: Bool, isEarlyAdopter: Bool, name: String, onboardingTasks: [[String: AnyCodable]], openMembership: Bool, pendingAccessRequests: Int, projects: [Projects], quota: [String: AnyCodable], require2FA: Bool, safeFields: [String], scrapeJavaScript: Bool, scrubIPAddresses: Bool, sensitiveFields: [String], slug: String, status: Status, storeCrashReports: Int, teams: [Teams], trustedRelays: [String]) {
           self.access = access
           self.allowSharedIssues = allowSharedIssues
           self.availableRoles = availableRoles
@@ -506,13 +521,6 @@ public extension Organizations {
         }
       }
 
-      public var response: Any {
-        switch self {
-        case let .status200(response): return response
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status200: return 200
@@ -537,7 +545,7 @@ public extension Organizations {
         case 401: self = .status401
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

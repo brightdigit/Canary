@@ -4,9 +4,15 @@ import Prch
 public extension Projects {
   /** Remove a service hook. */
   enum RemoveaServiceHook {
-    public static let service = APIService<Response>(id: "Remove a Service Hook", tag: "Projects", method: "DELETE", path: "/api/0/projects/{organization_slug}/{project_slug}/hooks/{hook_id}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:admin"])])
+    public static let service = Service<Response>(id: "Remove a Service Hook", tag: "Projects", method: "DELETE", path: "/api/0/projects/{organization_slug}/{project_slug}/hooks/{hook_id}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:admin"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        RemoveaServiceHook.service
+      }
+
       public struct Options {
         /** The slug of the organization the client keys belong to. */
         public var organizationSlug: String
@@ -28,21 +34,30 @@ public extension Projects {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: RemoveaServiceHook.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, projectSlug: String, hookId: String) {
+      public init(organizationSlug: String, projectSlug: String, hookId: String) {
         let options = Options(organizationSlug: organizationSlug, projectSlug: projectSlug, hookId: hookId)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(options.projectSlug)").replacingOccurrences(of: "{" + "hook_id" + "}", with: "\(options.hookId)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(options.projectSlug)").replacingOccurrences(of: "{" + "hook_id" + "}", with: "\(options.hookId)")
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Void, Void> {
+        switch self {
+        case .status204:
+          return .success(())
+
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -68,12 +83,6 @@ public extension Projects {
         }
       }
 
-      public var response: Any {
-        switch self {
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status204: return 204
@@ -95,7 +104,7 @@ public extension Projects {
         case 204: self = .status204
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

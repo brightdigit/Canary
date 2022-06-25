@@ -6,9 +6,15 @@ public extension Releases {
    The interval and date range are subject to certain restrictions and rounding rules.
    The date range is rounded to align with the interval, and is rounded to at least one hour. The interval can at most be one day and at least one hour currently. It has to cleanly divide one day, for rounding reasons. */
   enum RetrieveReleaseHealthSessionStatistics {
-    public static let service = APIService<Response>(id: "Retrieve Release Health Session Statistics", tag: "Releases", method: "GET", path: "/api/0/organizations/{organization_slug}/sessions/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
+    public static let service = Service<Response>(id: "Retrieve Release Health Session Statistics", tag: "Releases", method: "GET", path: "/api/0/organizations/{organization_slug}/sessions/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        RetrieveReleaseHealthSessionStatistics.service
+      }
+
       public struct Options {
         /** The slug of the organization. */
         public var organizationSlug: String
@@ -50,13 +56,13 @@ public extension Releases {
         /** This defines the end of the time series range, in the same format as the `interval`, relative to now. */
         public var statsPeriodEnd: String?
 
-        /** This defines the start of the time series range as an explicit datetime. */
-        public var start: DateTime?
+        /** This defines the start of the time series range as an explicit Date. */
+        public var start: Date?
 
-        /** This defines the inclusive end of the time series range as an explicit datetime. */
-        public var end: DateTime?
+        /** This defines the inclusive end of the time series range as an explicit Date. */
+        public var end: Date?
 
-        public init(organizationSlug: String, project: [Int], field: [String], environment: [String]? = nil, groupBy: [String]? = nil, query: String? = nil, statsPeriod: String? = nil, interval: String? = nil, statsPeriodStart: String? = nil, statsPeriodEnd: String? = nil, start: DateTime? = nil, end: DateTime? = nil) {
+        public init(organizationSlug: String, project: [Int], field: [String], environment: [String]? = nil, groupBy: [String]? = nil, query: String? = nil, statsPeriod: String? = nil, interval: String? = nil, statsPeriodStart: String? = nil, statsPeriodEnd: String? = nil, start: Date? = nil, end: Date? = nil) {
           self.organizationSlug = organizationSlug
           self.project = project
           self.field = field
@@ -76,20 +82,19 @@ public extension Releases {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: RetrieveReleaseHealthSessionStatistics.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, project: [Int], field: [String], environment: [String]? = nil, groupBy: [String]? = nil, query: String? = nil, statsPeriod: String? = nil, interval: String? = nil, statsPeriodStart: String? = nil, statsPeriodEnd: String? = nil, start: DateTime? = nil, end: DateTime? = nil) {
+      public init(organizationSlug: String, project: [Int], field: [String], environment: [String]? = nil, groupBy: [String]? = nil, query: String? = nil, statsPeriod: String? = nil, interval: String? = nil, statsPeriodStart: String? = nil, statsPeriodEnd: String? = nil, start: Date? = nil, end: Date? = nil) {
         let options = Options(organizationSlug: organizationSlug, project: project, field: field, environment: environment, groupBy: groupBy, query: query, statsPeriod: statsPeriod, interval: interval, statsPeriodStart: statsPeriodStart, statsPeriodEnd: statsPeriodEnd, start: start, end: end)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(self.options.organizationSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)")
       }
 
-      override public var queryParameters: [String: Any] {
+      public var queryParameters: [String: Any] {
         var params: [String: Any] = [:]
         params["project"] = options.project.map { String(describing: $0) }.joined(separator: ",")
         params["field"] = options.field.joined(separator: ",")
@@ -124,8 +129,19 @@ public extension Releases {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
-      public typealias FailureType = Status400
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Status200, Status400?> {
+        switch self {
+        case let .status200(response):
+          return .success(response)
+        case let .status400(response):
+          return .defaultResponse(400, response)
+        default:
+          return .defaultResponse(statusCode, nil)
+        }
+      }
+
+      public typealias FailureType = Status400?
 
       public typealias APIType = CanaryAPI
       /** Returns a time series of release health session statistics for projects bound to an organization.
@@ -133,13 +149,13 @@ public extension Releases {
        The date range is rounded to align with the interval, and is rounded to at least one hour. The interval can at most be one day and at least one hour currently. It has to cleanly divide one day, for rounding reasons. */
       public struct Status200: Model {
         /** The start time of the data being returned. */
-        public var start: DateTime
+        public var start: Date
 
         /** The exclusive end time of the data being returned. */
-        public var end: DateTime
+        public var end: Date
 
         /** The time slices of the timeseries data given in the `groups[].series` field. */
-        public var intervals: [DateTime]
+        public var intervals: [Date]
 
         public var groups: [Groups]
 
@@ -177,7 +193,7 @@ public extension Releases {
           }
         }
 
-        public init(start: DateTime, end: DateTime, intervals: [DateTime], groups: [Groups]) {
+        public init(start: Date, end: Date, intervals: [Date], groups: [Groups]) {
           self.start = start
           self.end = end
           self.intervals = intervals
@@ -265,14 +281,6 @@ public extension Releases {
 //        }
 //      }
 
-      public var response: Any {
-        switch self {
-        case let .status200(response): return response
-        case let .status400(response): return response
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status200: return 200
@@ -297,7 +305,7 @@ public extension Releases {
         case 400: self = try .status400(decoder.decode(Status400.self, from: data))
         case 401: self = .status401
         case 403: self = .status403
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

@@ -4,9 +4,15 @@ import Prch
 public extension Integration {
   /** Create an external issue from an integration platform integration. */
   enum CreateAnExternalIssue {
-    public static let service = APIService<Response>(id: "Create an External Issue", tag: "Integration", method: "POST", path: "/api/0/sentry-app-installations/{uuid}/external-issues/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:write"])])
+    public static let service = Service<Response>(id: "Create an External Issue", tag: "Integration", method: "POST", path: "/api/0/sentry-app-installations/{uuid}/external-issues/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:write"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        CreateAnExternalIssue.service
+      }
+
       /** Create an external issue from an integration platform integration. */
       public struct Body: Model {
         /** The ID of the Sentry issue to link the external issue to. */
@@ -60,26 +66,32 @@ public extension Integration {
 
       public var body: Body
 
-      public init(body: Body, options: Options, encoder: RequestEncoder? = nil) {
+      public init(body: Body, options: Options, encoder _: RequestEncoder? = nil) {
         self.body = body
         self.options = options
-        super.init(service: CreateAnExternalIssue.service) { defaultEncoder in
-          try (encoder ?? defaultEncoder).encode(body)
-        }
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(uuid: String, body: Body) {
+      public init(uuid: String, body: Body) {
         let options = Options(uuid: uuid)
         self.init(body: body, options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "uuid" + "}", with: "\(options.uuid)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "uuid" + "}", with: "\(options.uuid)")
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Status200, Void> {
+        switch self {
+        case let .status200(response):
+          return .success(response)
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -146,13 +158,6 @@ public extension Integration {
         }
       }
 
-      public var response: Any {
-        switch self {
-        case let .status200(response): return response
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status200: return 200
@@ -174,7 +179,7 @@ public extension Integration {
         case 200: self = try .status200(decoder.decode(Status200.self, from: data))
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

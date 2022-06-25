@@ -4,9 +4,15 @@ import Prch
 public extension Teams {
   /** Return details on an individual team. */
   enum RetrieveaTeam {
-    public static let service = APIService<Response>(id: "Retrieve a Team", tag: "Teams", method: "GET", path: "/api/0/teams/{organization_slug}/{team_slug}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:read"])])
+    public static let service = Service<Response>(id: "Retrieve a Team", tag: "Teams", method: "GET", path: "/api/0/teams/{organization_slug}/{team_slug}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:read"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        RetrieveaTeam.service
+      }
+
       public struct Options {
         /** The slug of the organization the team belongs to. */
         public var organizationSlug: String
@@ -24,21 +30,30 @@ public extension Teams {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: RetrieveaTeam.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, teamSlug: String) {
+      public init(organizationSlug: String, teamSlug: String) {
         let options = Options(organizationSlug: organizationSlug, teamSlug: teamSlug)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "team_slug" + "}", with: "\(options.teamSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "team_slug" + "}", with: "\(options.teamSlug)")
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Status200, Void> {
+        switch self {
+        case let .status200(response):
+          return .success(response)
+
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -50,7 +65,7 @@ public extension Teams {
       public struct Status200: Model {
         public var avatar: Avatar
 
-        public var dateCreated: DateTime
+        public var dateCreated: Date
 
         public var hasAccess: Bool
 
@@ -98,7 +113,7 @@ public extension Teams {
         public struct Organization: Model {
           public var avatar: Avatar
 
-          public var dateCreated: DateTime
+          public var dateCreated: Date
 
           public var id: String
 
@@ -164,7 +179,7 @@ public extension Teams {
             }
           }
 
-          public init(avatar: Avatar, dateCreated: DateTime, id: String, isEarlyAdopter: Bool, name: String, require2FA: Bool, slug: String, status: Status) {
+          public init(avatar: Avatar, dateCreated: Date, id: String, isEarlyAdopter: Bool, name: String, require2FA: Bool, slug: String, status: Status) {
             self.avatar = avatar
             self.dateCreated = dateCreated
             self.id = id
@@ -202,7 +217,7 @@ public extension Teams {
           }
         }
 
-        public init(avatar: Avatar, dateCreated: DateTime, hasAccess: Bool, id: String, isMember: Bool, isPending: Bool, memberCount: Int, name: String, slug: String, organization: Organization) {
+        public init(avatar: Avatar, dateCreated: Date, hasAccess: Bool, id: String, isMember: Bool, isPending: Bool, memberCount: Int, name: String, slug: String, organization: Organization) {
           self.avatar = avatar
           self.dateCreated = dateCreated
           self.hasAccess = hasAccess
@@ -264,13 +279,6 @@ public extension Teams {
         }
       }
 
-      public var response: Any {
-        switch self {
-        case let .status200(response): return response
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status200: return 200
@@ -292,7 +300,7 @@ public extension Teams {
         case 200: self = try .status200(decoder.decode(Status200.self, from: data))
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

@@ -4,16 +4,22 @@ import Prch
 public extension Releases {
   /** Update a release for a given organization. */
   enum UpdateAnOrganizationsRelease {
-    public static let service = APIService<Response>(id: "Update an Organization's Release", tag: "Releases", method: "PUT", path: "/api/0/organizations/{organization_slug}/releases/{version}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
+    public static let service = Service<Response>(id: "Update an Organization's Release", tag: "Releases", method: "PUT", path: "/api/0/organizations/{organization_slug}/releases/{version}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        UpdateAnOrganizationsRelease.service
+      }
+
       /** Update a release for a given organization. */
       public struct Body: Model {
         /** An optional list of commit data to be associated with the release. Commits must include parameters `id` (the sha of the commit), and can optionally include `repository`, `message`, `author_name`, `author_email`, and `timestamp`. */
         public var commits: [[String: AnyCodable]]?
 
         /** An optional date that indicates when the release went live. If not provided the current time is assumed. */
-        public var dateReleased: DateTime?
+        public var dateReleased: Date?
 
         /** An optional commit reference. This is useful if a tagged version has been provided. */
         public var ref: String?
@@ -24,7 +30,7 @@ public extension Releases {
         /** A URL that points to the release. This can be the path to an online interface to the source code for instance. */
         public var url: String?
 
-        public init(commits: [[String: AnyCodable]]? = nil, dateReleased: DateTime? = nil, ref: String? = nil, refs: [[String: AnyCodable]]? = nil, url: String? = nil) {
+        public init(commits: [[String: AnyCodable]]? = nil, dateReleased: Date? = nil, ref: String? = nil, refs: [[String: AnyCodable]]? = nil, url: String? = nil) {
           self.commits = commits
           self.dateReleased = dateReleased
           self.ref = ref
@@ -70,26 +76,33 @@ public extension Releases {
 
       public var body: Body?
 
-      public init(body: Body?, options: Options, encoder: RequestEncoder? = nil) {
+      public init(body: Body?, options: Options, encoder _: RequestEncoder? = nil) {
         self.body = body
         self.options = options
-        super.init(service: UpdateAnOrganizationsRelease.service) { defaultEncoder in
-          try (encoder ?? defaultEncoder).encode(body)
-        }
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, version: String, body: Body? = nil) {
+      public init(organizationSlug: String, version: String, body: Body? = nil) {
         let options = Options(organizationSlug: organizationSlug, version: version)
         self.init(body: body, options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "version" + "}", with: "\(options.version)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "version" + "}", with: "\(options.version)")
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Status200, Void> {
+        switch self {
+        case let .status200(response):
+          return .success(response)
+
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -105,19 +118,19 @@ public extension Releases {
 
         public var data: [String: AnyCodable]
 
-        public var dateCreated: DateTime
+        public var dateCreated: Date
 
-        public var dateReleased: DateTime?
+        public var dateReleased: Date?
 
         public var deployCount: Int
 
-        public var firstEvent: DateTime?
+        public var firstEvent: Date?
 
         public var lastCommit: [String: AnyCodable]?
 
         public var lastDeploy: [String: AnyCodable]?
 
-        public var lastEvent: DateTime?
+        public var lastEvent: Date?
 
         public var newGroups: Int
 
@@ -159,7 +172,7 @@ public extension Releases {
           }
         }
 
-        public init(authors: [[String: AnyCodable]], commitCount: Int, data: [String: AnyCodable], dateCreated: DateTime, dateReleased: DateTime?, deployCount: Int, firstEvent: DateTime?, lastCommit: [String: AnyCodable]?, lastDeploy: [String: AnyCodable]?, lastEvent: DateTime?, newGroups: Int, owner: [String: AnyCodable]?, projects: [Projects], ref: String?, shortVersion: String, version: String, url: String?) {
+        public init(authors: [[String: AnyCodable]], commitCount: Int, data: [String: AnyCodable], dateCreated: Date, dateReleased: Date?, deployCount: Int, firstEvent: Date?, lastCommit: [String: AnyCodable]?, lastDeploy: [String: AnyCodable]?, lastEvent: Date?, newGroups: Int, owner: [String: AnyCodable]?, projects: [Projects], ref: String?, shortVersion: String, version: String, url: String?) {
           self.authors = authors
           self.commitCount = commitCount
           self.data = data
@@ -242,13 +255,6 @@ public extension Releases {
         }
       }
 
-      public var response: Any {
-        switch self {
-        case let .status200(response): return response
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status200: return 200
@@ -270,7 +276,7 @@ public extension Releases {
         case 200: self = try .status200(decoder.decode(Status200.self, from: data))
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

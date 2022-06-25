@@ -4,9 +4,15 @@ import Prch
 public extension Teams {
   /** Update various attributes and configurable settings for the given team. */
   enum UpdateaTeam {
-    public static let service = APIService<Response>(id: "Update a Team", tag: "Teams", method: "PUT", path: "/api/0/teams/{organization_slug}/{team_slug}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:write"])])
+    public static let service = Service<Response>(id: "Update a Team", tag: "Teams", method: "PUT", path: "/api/0/teams/{organization_slug}/{team_slug}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:write"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        UpdateaTeam.service
+      }
+
       /** Update various attributes and configurable settings for the given team. */
       public struct Body: Model {
         /** The new name for the team. */
@@ -52,26 +58,33 @@ public extension Teams {
 
       public var body: Body
 
-      public init(body: Body, options: Options, encoder: RequestEncoder? = nil) {
+      public init(body: Body, options: Options, encoder _: RequestEncoder? = nil) {
         self.body = body
         self.options = options
-        super.init(service: UpdateaTeam.service) { defaultEncoder in
-          try (encoder ?? defaultEncoder).encode(body)
-        }
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, teamSlug: String, body: Body) {
+      public init(organizationSlug: String, teamSlug: String, body: Body) {
         let options = Options(organizationSlug: organizationSlug, teamSlug: teamSlug)
         self.init(body: body, options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "team_slug" + "}", with: "\(options.teamSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "team_slug" + "}", with: "\(options.teamSlug)")
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Status200, Void> {
+        switch self {
+        case let .status200(response):
+          return .success(response)
+
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -83,7 +96,7 @@ public extension Teams {
       public struct Status200: Model {
         public var avatar: Avatar
 
-        public var dateCreated: DateTime
+        public var dateCreated: Date
 
         public var hasAccess: Bool
 
@@ -125,7 +138,7 @@ public extension Teams {
           }
         }
 
-        public init(avatar: Avatar, dateCreated: DateTime, hasAccess: Bool, id: String, isMember: Bool, isPending: Bool, memberCount: Int, name: String, slug: String) {
+        public init(avatar: Avatar, dateCreated: Date, hasAccess: Bool, id: String, isMember: Bool, isPending: Bool, memberCount: Int, name: String, slug: String) {
           self.avatar = avatar
           self.dateCreated = dateCreated
           self.hasAccess = hasAccess
@@ -187,13 +200,6 @@ public extension Teams {
         }
       }
 
-      public var response: Any {
-        switch self {
-        case let .status200(response): return response
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status200: return 200
@@ -218,7 +224,7 @@ public extension Teams {
         case 400: self = .status400
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

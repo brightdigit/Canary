@@ -4,9 +4,15 @@ import Prch
 public extension Events {
   /** Updates an individual issue's attributes.  Only the attributes submitted are modified. */
   enum UpdateAnIssue {
-    public static let service = APIService<Response>(id: "Update an Issue", tag: "Events", method: "PUT", path: "/api/0/issues/{issue_id}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:write"])])
+    public static let service = Service<Response>(id: "Update an Issue", tag: "Events", method: "PUT", path: "/api/0/issues/{issue_id}/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:write"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        UpdateAnIssue.service
+      }
+
       /** Updates an individual issue's attributes.  Only the attributes submitted are modified. */
       public struct Body: Model {
         /** The actor id (or username) of the user or team that should be assigned to this issue. */
@@ -71,26 +77,33 @@ public extension Events {
 
       public var body: Body
 
-      public init(body: Body, options: Options, encoder: RequestEncoder? = nil) {
+      public init(body: Body, options: Options, encoder _: RequestEncoder? = nil) {
         self.body = body
         self.options = options
-        super.init(service: UpdateAnIssue.service) { defaultEncoder in
-          try (encoder ?? defaultEncoder).encode(body)
-        }
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(issueId: String, body: Body) {
+      public init(issueId: String, body: Body) {
         let options = Options(issueId: issueId)
         self.init(body: body, options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "issue_id" + "}", with: "\(options.issueId)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "issue_id" + "}", with: "\(options.issueId)")
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Status200, Void> {
+        switch self {
+        case let .status200(response):
+          return .success(response)
+
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -295,13 +308,6 @@ public extension Events {
         }
       }
 
-      public var response: Any {
-        switch self {
-        case let .status200(response): return response
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status200: return 200
@@ -323,7 +329,7 @@ public extension Events {
         case 200: self = try .status200(decoder.decode(Status200.self, from: data))
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

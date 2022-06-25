@@ -109,14 +109,14 @@
       {
         "name": "start",
         "in": "query",
-        "description": "This defines the start of the time series range as an explicit datetime.",
+        "description": "This defines the start of the time series range as an explicit Date.",
         "required": false,
         "schema": {"type": "string", "format": "date-time"}
       },
       {
         "name": "end",
         "in": "query",
-        "description": "This defines the inclusive end of the time series range as an explicit datetime.",
+        "description": "This defines the inclusive end of the time series range as an explicit Date.",
         "required": false,
         "schema": {"type": "string", "format": "date-time"}
       }

@@ -4,9 +4,15 @@ import Prch
 public extension Integration {
   /** Return a list of integration platform installations for a given organization. */
   enum ListAnOrganizationsIntegrationPlatformInstallations {
-    public static let service = APIService<Response>(id: "List an Organization's Integration Platform Installations", tag: "Integration", method: "GET", path: "/api/0/organizations/{organization_slug}/sentry-app-installations/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org:read", "org:integrations"])])
+    public static let service = Service<Response>(id: "List an Organization's Integration Platform Installations", tag: "Integration", method: "GET", path: "/api/0/organizations/{organization_slug}/sentry-app-installations/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org:read", "org:integrations"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        ListAnOrganizationsIntegrationPlatformInstallations.service
+      }
+
       public struct Options {
         /** The organization short name. */
         public var organizationSlug: String
@@ -20,21 +26,31 @@ public extension Integration {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: ListAnOrganizationsIntegrationPlatformInstallations.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String) {
+      public init(organizationSlug: String) {
         let options = Options(organizationSlug: organizationSlug)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)")
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<[Status200], Void> {
+        switch self {
+        case .status403:
+          return .defaultResponse(403, ())
+        case .status404:
+          return .defaultResponse(404, ())
+        case let .status200(response):
+          return .success(response)
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -143,13 +159,6 @@ public extension Integration {
         }
       }
 
-      public var response: Any {
-        switch self {
-        case let .status200(response): return response
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status200: return 200
@@ -171,7 +180,7 @@ public extension Integration {
         case 200: self = try .status200(decoder.decode([Status200].self, from: data))
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

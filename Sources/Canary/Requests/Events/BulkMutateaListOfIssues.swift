@@ -11,9 +11,15 @@ public extension Events {
    The following attributes can be modified and are supplied as JSON object in the body:
    If any ids are out of scope this operation will succeed without any data mutation. */
   enum BulkMutateaListOfIssues {
-    public static let service = APIService<Response>(id: "Bulk Mutate a List of Issues", tag: "Events", method: "PUT", path: "/api/0/projects/{organization_slug}/{project_slug}/issues/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
+    public static let service = Service<Response>(id: "Bulk Mutate a List of Issues", tag: "Events", method: "PUT", path: "/api/0/projects/{organization_slug}/{project_slug}/issues/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        BulkMutateaListOfIssues.service
+      }
+
       /** Bulk mutate various attributes on issues.  The list of issues to modify is given through the `id` query parameter.  It is repeated for each issue that should be modified.
        - For non-status updates, the `id` query parameter is required.
        - For status updates, the `id` query parameter may be omitted
@@ -166,25 +172,22 @@ public extension Events {
 
       public var body: Body
 
-      public init(body: Body, options: Options, encoder: RequestEncoder? = nil) {
+      public init(body: Body, options: Options, encoder _: RequestEncoder? = nil) {
         self.body = body
         self.options = options
-        super.init(service: BulkMutateaListOfIssues.service) { defaultEncoder in
-          try (encoder ?? defaultEncoder).encode(body)
-        }
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, projectSlug: String, id: Int? = nil, status: String? = nil, body: Body) {
+      public init(organizationSlug: String, projectSlug: String, id: Int? = nil, status: String? = nil, body: Body) {
         let options = Options(organizationSlug: organizationSlug, projectSlug: projectSlug, id: id, status: status)
         self.init(body: body, options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(self.options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(self.options.projectSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(options.projectSlug)")
       }
 
-      override public var queryParameters: [String: Any] {
+      public var queryParameters: [String: Any] {
         var params: [String: Any] = [:]
         if let id = options.id {
           params["id"] = id
@@ -196,7 +199,17 @@ public extension Events {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Status200, Void> {
+        switch self {
+        case let .status200(response):
+          return .success(response)
+
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -277,13 +290,6 @@ public extension Events {
         }
       }
 
-      public var response: Any {
-        switch self {
-        case let .status200(response): return response
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status200: return 200
@@ -308,7 +314,7 @@ public extension Events {
         case 400: self = .status400
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

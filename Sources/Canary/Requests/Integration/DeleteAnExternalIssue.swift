@@ -4,9 +4,15 @@ import Prch
 public extension Integration {
   /** Delete an external issue. */
   enum DeleteAnExternalIssue {
-    public static let service = APIService<Response>(id: "Delete an External Issue", tag: "Integration", method: "DELETE", path: "/api/0/sentry-app-installations/{uuid}/external-issues/{external_issue_id}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:admin"])])
+    public static let service = Service<Response>(id: "Delete an External Issue", tag: "Integration", method: "DELETE", path: "/api/0/sentry-app-installations/{uuid}/external-issues/{external_issue_id}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:admin"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        DeleteAnExternalIssue.service
+      }
+
       public struct Options {
         /** The uuid of the integration platform integration. */
         public var uuid: String
@@ -24,21 +30,24 @@ public extension Integration {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: DeleteAnExternalIssue.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(uuid: String, externalIssueId: String) {
+      public init(uuid: String, externalIssueId: String) {
         let options = Options(uuid: uuid, externalIssueId: externalIssueId)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "uuid" + "}", with: "\(options.uuid)").replacingOccurrences(of: "{" + "external_issue_id" + "}", with: "\(options.externalIssueId)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "uuid" + "}", with: "\(options.uuid)").replacingOccurrences(of: "{" + "external_issue_id" + "}", with: "\(options.externalIssueId)")
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Void, Void> {
+        return .success(())
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -64,12 +73,6 @@ public extension Integration {
         }
       }
 
-      public var response: Any {
-        switch self {
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status204: return 204
@@ -91,7 +94,7 @@ public extension Integration {
         case 204: self = .status204
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

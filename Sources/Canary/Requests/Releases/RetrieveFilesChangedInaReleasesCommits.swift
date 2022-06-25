@@ -4,9 +4,15 @@ import Prch
 public extension Releases {
   /** Retrieve files changed in a release's commits */
   enum RetrieveFilesChangedInaReleasesCommits {
-    public static let service = APIService<Response>(id: "Retrieve Files Changed in a Release's Commits", tag: "Releases", method: "GET", path: "/api/0/organizations/{organization_slug}/releases/{version}/commitfiles/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
+    public static let service = Service<Response>(id: "Retrieve Files Changed in a Release's Commits", tag: "Releases", method: "GET", path: "/api/0/organizations/{organization_slug}/releases/{version}/commitfiles/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        RetrieveFilesChangedInaReleasesCommits.service
+      }
+
       public struct Options {
         /** The slug of the organization the release belongs to. */
         public var organizationSlug: String
@@ -24,21 +30,30 @@ public extension Releases {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: RetrieveFilesChangedInaReleasesCommits.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, version: String) {
+      public init(organizationSlug: String, version: String) {
         let options = Options(organizationSlug: organizationSlug, version: version)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "version" + "}", with: "\(options.version)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "version" + "}", with: "\(options.version)")
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Void, Void> {
+        switch self {
+        case .status200:
+          return .success(())
+
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -64,12 +79,6 @@ public extension Releases {
         }
       }
 
-      public var response: Any {
-        switch self {
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status200: return 200
@@ -91,7 +100,7 @@ public extension Releases {
         case 200: self = .status200
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

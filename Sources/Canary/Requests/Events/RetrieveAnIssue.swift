@@ -10,9 +10,15 @@ public extension Events {
 
   /** Return details on an individual issue. This returns the basic stats for the issue (title, last seen, first seen), some overall numbers (number of comments, user reports) as well as the summarized event data. */
   enum RetrieveAnIssue {
-    public static let service = APIService<Response>(id: "Retrieve an Issue", tag: "Events", method: "GET", path: "/api/0/issues/{issue_id}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:read"])])
+    public static let service = Service<Response>(id: "Retrieve an Issue", tag: "Events", method: "GET", path: "/api/0/issues/{issue_id}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["event:read"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        RetrieveAnIssue.service
+      }
+
       public struct Options {
         /** The ID of the issue to retrieve. */
         public var issueId: String
@@ -26,21 +32,30 @@ public extension Events {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: RetrieveAnIssue.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(issueId: String) {
+      public init(issueId: String) {
         let options = Options(issueId: issueId)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "issue_id" + "}", with: "\(options.issueId)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "issue_id" + "}", with: "\(options.issueId)")
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Status200, Void> {
+        switch self {
+        case let .status200(response):
+          return .success(response)
+
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -491,13 +506,6 @@ public extension Events {
         }
       }
 
-      public var response: Any {
-        switch self {
-        case let .status200(response): return response
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status200: return 200
@@ -516,7 +524,7 @@ public extension Events {
         switch statusCode {
         case 200: self = try .status200(decoder.decode(Status200.self, from: data))
         case 403: self = .status403
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

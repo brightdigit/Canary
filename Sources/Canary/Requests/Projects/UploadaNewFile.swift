@@ -9,9 +9,15 @@ public extension Projects {
    contains the individual debug images.  Uploading through this endpoint
    will create different files for the contained images. */
   enum UploadaNewFile {
-    public static let service = APIService<Response>(id: "Upload a New File", tag: "Projects", method: "POST", path: "/api/0/projects/{organization_slug}/{project_slug}/files/dsyms/", hasBody: true, isUpload: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
+    public static let service = Service<Response>(id: "Upload a New File", tag: "Projects", method: "POST", path: "/api/0/projects/{organization_slug}/{project_slug}/files/dsyms/", hasBody: true, isUpload: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        UploadaNewFile.service
+      }
+
       public struct Options {
         /** The slug of the organization the project belongs to. */
         public var organizationSlug: String
@@ -33,27 +39,36 @@ public extension Projects {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: UploadaNewFile.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, projectSlug: String, file: File) {
+      public init(organizationSlug: String, projectSlug: String, file: File) {
         let options = Options(organizationSlug: organizationSlug, projectSlug: projectSlug, file: file)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(self.options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(self.options.projectSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(options.projectSlug)")
       }
 
-      override public var formParameters: [String: Any] {
+      public var formParameters: [String: Any] {
         var params: [String: Any] = [:]
         params["file"] = options.file.base64EncodedString(options:)
         return params
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Void, Void> {
+        switch self {
+        case .status201:
+          return .success(())
+
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -82,12 +97,6 @@ public extension Projects {
         }
       }
 
-      public var response: Any {
-        switch self {
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status201: return 201
@@ -112,7 +121,7 @@ public extension Projects {
         case 400: self = .status400
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

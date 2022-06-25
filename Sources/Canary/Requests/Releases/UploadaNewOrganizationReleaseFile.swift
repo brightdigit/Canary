@@ -4,9 +4,15 @@ import Prch
 public extension Releases {
   /** Upload a new organization release file. */
   enum UploadaNewOrganizationReleaseFile {
-    public static let service = APIService<Response>(id: "Upload a New Organization Release File", tag: "Releases", method: "POST", path: "/api/0/organizations/{organization_slug}/releases/{version}/files/", hasBody: true, isUpload: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
+    public static let service = Service<Response>(id: "Upload a New Organization Release File", tag: "Releases", method: "POST", path: "/api/0/organizations/{organization_slug}/releases/{version}/files/", hasBody: true, isUpload: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        UploadaNewOrganizationReleaseFile.service
+      }
+
       public struct Options {
         /** The slug of the organization. */
         public var organizationSlug: String
@@ -40,20 +46,19 @@ public extension Releases {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: UploadaNewOrganizationReleaseFile.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, version: String, file: File, dist: String? = nil, header: String? = nil, name: String? = nil) {
+      public init(organizationSlug: String, version: String, file: File, dist: String? = nil, header: String? = nil, name: String? = nil) {
         let options = Options(organizationSlug: organizationSlug, version: version, file: file, dist: dist, header: header, name: name)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(self.options.organizationSlug)").replacingOccurrences(of: "{" + "version" + "}", with: "\(self.options.version)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "version" + "}", with: "\(options.version)")
       }
 
-      override public var formParameters: [String: Any] {
+      public var formParameters: [String: Any] {
         var params: [String: Any] = [:]
         params["file"] = options.file.base64EncodedString(options:)
         if let dist = options.dist {
@@ -69,7 +74,17 @@ public extension Releases {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Void, Void> {
+        switch self {
+        case .status201:
+          return .success(())
+
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -95,12 +110,6 @@ public extension Releases {
         }
       }
 
-      public var response: Any {
-        switch self {
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status201: return 201
@@ -122,7 +131,7 @@ public extension Releases {
         case 201: self = .status201
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

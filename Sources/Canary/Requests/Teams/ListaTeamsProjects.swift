@@ -4,9 +4,15 @@ import Prch
 public extension Teams {
   /** Return a list of projects bound to a team. */
   enum ListaTeamsProjects {
-    public static let service = APIService<Response>(id: "List a Team's Projects", tag: "Teams", method: "GET", path: "/api/0/teams/{organization_slug}/{team_slug}/projects/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
+    public static let service = Service<Response>(id: "List a Team's Projects", tag: "Teams", method: "GET", path: "/api/0/teams/{organization_slug}/{team_slug}/projects/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        ListaTeamsProjects.service
+      }
+
       public struct Options {
         /** The slug of the organization the team belongs to. */
         public var organizationSlug: String
@@ -28,20 +34,19 @@ public extension Teams {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: ListaTeamsProjects.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, teamSlug: String, cursor: String? = nil) {
+      public init(organizationSlug: String, teamSlug: String, cursor: String? = nil) {
         let options = Options(organizationSlug: organizationSlug, teamSlug: teamSlug, cursor: cursor)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(self.options.organizationSlug)").replacingOccurrences(of: "{" + "team_slug" + "}", with: "\(self.options.teamSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "team_slug" + "}", with: "\(options.teamSlug)")
       }
 
-      override public var queryParameters: [String: Any] {
+      public var queryParameters: [String: Any] {
         var params: [String: Any] = [:]
         if let cursor = options.cursor {
           params["cursor"] = cursor
@@ -50,7 +55,17 @@ public extension Teams {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<[Status200], Void> {
+        switch self {
+        case let .status200(response):
+          return .success(response)
+
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -60,7 +75,7 @@ public extension Teams {
       public typealias APIType = CanaryAPI
       /** Return a list of projects bound to a team. */
       public struct Status200: Model {
-        public var dateCreated: DateTime
+        public var dateCreated: Date
 
         public var features: [String]
 
@@ -148,7 +163,7 @@ public extension Teams {
           }
         }
 
-        public init(dateCreated: DateTime, features: [String], firstEvent: String?, hasAccess: Bool, id: String, isBookmarked: Bool, isMember: Bool, name: String, platform: String?, slug: String, team: Team, teams: [Teams], latestDeploys: String?) {
+        public init(dateCreated: Date, features: [String], firstEvent: String?, hasAccess: Bool, id: String, isBookmarked: Bool, isMember: Bool, name: String, platform: String?, slug: String, team: Team, teams: [Teams], latestDeploys: String?) {
           self.dateCreated = dateCreated
           self.features = features
           self.firstEvent = firstEvent
@@ -219,13 +234,6 @@ public extension Teams {
         }
       }
 
-      public var response: Any {
-        switch self {
-        case let .status200(response): return response
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status200: return 200
@@ -247,7 +255,7 @@ public extension Teams {
         case 200: self = try .status200(decoder.decode([Status200].self, from: data))
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

@@ -4,9 +4,15 @@ import Prch
 public extension Teams {
   /** Create a new team bound to an organization. Only the name of the team is needed to create it, the slug can be auto generated. */
   enum CreateaNewTeam {
-    public static let service = APIService<Response>(id: "Create a New Team", tag: "Teams", method: "POST", path: "/api/0/organizations/{organization_slug}/teams/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:write"])])
+    public static let service = Service<Response>(id: "Create a New Team", tag: "Teams", method: "POST", path: "/api/0/organizations/{organization_slug}/teams/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["team:write"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        CreateaNewTeam.service
+      }
+
       /** Create a new team bound to an organization. Only the name of the team is needed to create it, the slug can be auto generated. */
       public struct Body: Model {
         /** The name of the team. */
@@ -48,26 +54,33 @@ public extension Teams {
 
       public var body: Body
 
-      public init(body: Body, options: Options, encoder: RequestEncoder? = nil) {
+      public init(body: Body, options: Options, encoder _: RequestEncoder? = nil) {
         self.body = body
         self.options = options
-        super.init(service: CreateaNewTeam.service) { defaultEncoder in
-          try (encoder ?? defaultEncoder).encode(body)
-        }
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, body: Body) {
+      public init(organizationSlug: String, body: Body) {
         let options = Options(organizationSlug: organizationSlug)
         self.init(body: body, options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)")
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Status201, Void> {
+        switch self {
+        case let .status201(response):
+          return .success(response)
+
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -79,7 +92,7 @@ public extension Teams {
       public struct Status201: Model {
         public var avatar: Avatar
 
-        public var dateCreated: DateTime
+        public var dateCreated: Date
 
         public var hasAccess: Bool
 
@@ -121,7 +134,7 @@ public extension Teams {
           }
         }
 
-        public init(avatar: Avatar, dateCreated: DateTime, hasAccess: Bool, id: String, isMember: Bool, isPending: Bool, memberCount: Int, name: String, slug: String) {
+        public init(avatar: Avatar, dateCreated: Date, hasAccess: Bool, id: String, isMember: Bool, isPending: Bool, memberCount: Int, name: String, slug: String) {
           self.avatar = avatar
           self.dateCreated = dateCreated
           self.hasAccess = hasAccess
@@ -183,13 +196,6 @@ public extension Teams {
         }
       }
 
-      public var response: Any {
-        switch self {
-        case let .status201(response): return response
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status201: return 201
@@ -214,7 +220,7 @@ public extension Teams {
         case 400: self = .status400
         case 403: self = .status403
         case 409: self = .status409
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

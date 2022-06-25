@@ -8,9 +8,15 @@ public extension Projects {
    If feedback is rejected due to a mutability threshold, a 409 status code will be returned.
    Note: Feedback may be submitted with DSN authentication (see auth documentation). */
   enum SubmitUserFeedback {
-    public static let service = APIService<Response>(id: "Submit User Feedback", tag: "Projects", method: "POST", path: "/api/0/projects/{organization_slug}/{project_slug}/user-feedback/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"]), SecurityRequirement(type: "dsn", scopes: [])])
+    public static let service = Service<Response>(id: "Submit User Feedback", tag: "Projects", method: "POST", path: "/api/0/projects/{organization_slug}/{project_slug}/user-feedback/", hasBody: true, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:write"]), SecurityRequirement(type: "dsn", scopes: [])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        SubmitUserFeedback.service
+      }
+
       /** Submit and associate user feedback with an issue.
        Feedback must be received by the server no more than 30 minutes after the event was saved.
        Additionally, within 5 minutes of submitting feedback it may also be overwritten. This is useful in situations where you may need to retry sending a request due to network failures.
@@ -72,26 +78,33 @@ public extension Projects {
 
       public var body: Body?
 
-      public init(body: Body?, options: Options, encoder: RequestEncoder? = nil) {
+      public init(body: Body?, options: Options, encoder _: RequestEncoder? = nil) {
         self.body = body
         self.options = options
-        super.init(service: SubmitUserFeedback.service) { defaultEncoder in
-          try (encoder ?? defaultEncoder).encode(body)
-        }
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, projectSlug: String, body: Body? = nil) {
+      public init(organizationSlug: String, projectSlug: String, body: Body? = nil) {
         let options = Options(organizationSlug: organizationSlug, projectSlug: projectSlug)
         self.init(body: body, options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(options.projectSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "project_slug" + "}", with: "\(options.projectSlug)")
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Status200, Void> {
+        switch self {
+        case let .status200(response):
+          return .success(response)
+
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -218,13 +231,6 @@ public extension Projects {
         }
       }
 
-      public var response: Any {
-        switch self {
-        case let .status200(response): return response
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status200: return 200
@@ -252,7 +258,7 @@ public extension Projects {
         case 403: self = .status403
         case 404: self = .status404
         case 409: self = .status409
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

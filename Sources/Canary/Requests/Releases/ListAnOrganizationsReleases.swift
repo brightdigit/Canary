@@ -4,9 +4,15 @@ import Prch
 public extension Releases {
   /** Return a list of releases for a given organization. */
   enum ListAnOrganizationsReleases {
-    public static let service = APIService<Response>(id: "List an Organization's Releases", tag: "Releases", method: "GET", path: "/api/0/organizations/{organization_slug}/releases/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
+    public static let service = Service<Response>(id: "List an Organization's Releases", tag: "Releases", method: "GET", path: "/api/0/organizations/{organization_slug}/releases/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:releases"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        ListAnOrganizationsReleases.service
+      }
+
       public struct Options {
         /** The slug of the organization. */
         public var organizationSlug: String
@@ -24,20 +30,19 @@ public extension Releases {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: ListAnOrganizationsReleases.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(organizationSlug: String, query: String? = nil) {
+      public init(organizationSlug: String, query: String? = nil) {
         let options = Options(organizationSlug: organizationSlug, query: query)
         self.init(options: options)
       }
 
-      override public var path: String {
-        super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(self.options.organizationSlug)")
+      public var path: String {
+        service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)")
       }
 
-      override public var queryParameters: [String: Any] {
+      public var queryParameters: [String: Any] {
         var params: [String: Any] = [:]
         if let query = options.query {
           params["query"] = query
@@ -46,7 +51,23 @@ public extension Releases {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<[Status200], Void> {
+        switch self {
+        case .status401:
+          return .defaultResponse(401, ())
+
+        case .status403:
+          return .defaultResponse(403, ())
+
+        case .status404:
+          return .defaultResponse(404, ())
+
+        case let .status200(response):
+          return .success(response)
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -62,19 +83,19 @@ public extension Releases {
 
         public var data: [String: AnyCodable]
 
-        public var dateCreated: DateTime
+        public var dateCreated: Date
 
-        public var dateReleased: DateTime?
+        public var dateReleased: Date?
 
         public var deployCount: Int
 
-        public var firstEvent: DateTime?
+        public var firstEvent: Date?
 
         public var lastCommit: [String: AnyCodable]?
 
         public var lastDeploy: [String: AnyCodable]?
 
-        public var lastEvent: DateTime?
+        public var lastEvent: Date?
 
         public var newGroups: Int
 
@@ -116,7 +137,7 @@ public extension Releases {
           }
         }
 
-        public init(authors: [[String: AnyCodable]], commitCount: Int, data: [String: AnyCodable], dateCreated: DateTime, dateReleased: DateTime?, deployCount: Int, firstEvent: DateTime?, lastCommit: [String: AnyCodable]?, lastDeploy: [String: AnyCodable]?, lastEvent: DateTime?, newGroups: Int, owner: [String: AnyCodable]?, projects: [Projects], ref: String?, shortVersion: String, version: String, url: String?) {
+        public init(authors: [[String: AnyCodable]], commitCount: Int, data: [String: AnyCodable], dateCreated: Date, dateReleased: Date?, deployCount: Int, firstEvent: Date?, lastCommit: [String: AnyCodable]?, lastDeploy: [String: AnyCodable]?, lastEvent: Date?, newGroups: Int, owner: [String: AnyCodable]?, projects: [Projects], ref: String?, shortVersion: String, version: String, url: String?) {
           self.authors = authors
           self.commitCount = commitCount
           self.data = data
@@ -202,13 +223,6 @@ public extension Releases {
         }
       }
 
-      public var response: Any {
-        switch self {
-        case let .status200(response): return response
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status200: return 200
@@ -233,7 +247,7 @@ public extension Releases {
         case 401: self = .status401
         case 403: self = .status403
         case 404: self = .status404
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 

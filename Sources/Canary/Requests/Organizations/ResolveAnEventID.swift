@@ -5,9 +5,9 @@ import Prch
   public extension Organizations {
     /** This resolves an event ID to the project slug and internal issue ID and internal event ID. */
     enum ResolveAnEventID {
-      public static let service = APIService<Response>(id: "Resolve an Event ID", tag: "Organizations", method: "GET", path: "/api/0/organizations/{organization_slug}/eventids/{event_id}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
+      public static let service = Service<Response>(id: "Resolve an Event ID", tag: "Organizations", method: "GET", path: "/api/0/organizations/{organization_slug}/eventids/{event_id}/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["org: read"])])
 
-      public final class Request: APIRequest<Response, CanaryAPI> {
+      public struct Request: DeprecatedRequest<Response, CanaryAPI> {
         public struct Options {
           /** The slug of the organization the event ID should be looked up in. */
           public var organizationSlug: String
@@ -25,21 +25,27 @@ import Prch
 
         public init(options: Options) {
           self.options = options
-          super.init(service: ResolveAnEventID.service)
         }
 
         /// convenience initialiser so an Option doesn't have to be created
-        public convenience init(organizationSlug: String, eventId: String) {
+        public init(organizationSlug: String, eventId: String) {
           let options = Options(organizationSlug: organizationSlug, eventId: eventId)
           self.init(options: options)
         }
 
-        override public var path: String {
-          super.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "event_id" + "}", with: "\(options.eventId)")
+        public var path: String {
+          service.path.replacingOccurrences(of: "{" + "organization_slug" + "}", with: "\(options.organizationSlug)").replacingOccurrences(of: "{" + "event_id" + "}", with: "\(options.eventId)")
         }
       }
 
-      public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+      public enum Response: Prch.Response {
+        public var response: ClientResult<Status200, Void> {
+          switch self {
+          case let .status200(response):
+            return .success(response)
+          }
+        }
+
         public var failure: FailureType? {
           successful ? nil : ()
         }
@@ -565,7 +571,7 @@ import Prch
           case 401: self = .status401
           case 403: self = .status403
           case 404: self = .status404
-          default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+          default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
           }
         }
 

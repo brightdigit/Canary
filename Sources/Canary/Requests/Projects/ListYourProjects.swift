@@ -4,9 +4,15 @@ import Prch
 public extension Projects {
   /** Return a list of projects available to the authenticated session. */
   enum ListYourProjects {
-    public static let service = APIService<Response>(id: "List Your Projects", tag: "Projects", method: "GET", path: "/api/0/projects/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
+    public static let service = Service<Response>(id: "List Your Projects", tag: "Projects", method: "GET", path: "/api/0/projects/", hasBody: false, securityRequirements: [SecurityRequirement(type: "auth_token", scopes: ["project:read"])])
 
-    public final class Request: APIRequest<Response, CanaryAPI> {
+    public struct Request: ServiceRequest {
+      public typealias ResponseType = Response
+
+      public var service: Service<Response> {
+        ListYourProjects.service
+      }
+
       public struct Options {
         /** A pointer to the last object fetched and its' sort order; used to retrieve the next or previous results. */
         public var cursor: String?
@@ -20,16 +26,15 @@ public extension Projects {
 
       public init(options: Options) {
         self.options = options
-        super.init(service: ListYourProjects.service)
       }
 
       /// convenience initialiser so an Option doesn't have to be created
-      public convenience init(cursor: String? = nil) {
+      public init(cursor: String? = nil) {
         let options = Options(cursor: cursor)
         self.init(options: options)
       }
 
-      override public var queryParameters: [String: Any] {
+      public var queryParameters: [String: Any] {
         var params: [String: Any] = [:]
         if let cursor = options.cursor {
           params["cursor"] = cursor
@@ -38,7 +43,17 @@ public extension Projects {
       }
     }
 
-    public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<[Status200], Void> {
+        switch self {
+        case let .status200(response):
+          return .success(response)
+
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -60,7 +75,7 @@ public extension Projects {
 
         public var color: String
 
-        public var dateCreated: DateTime
+        public var dateCreated: Date
 
         public var features: [String]
 
@@ -118,7 +133,7 @@ public extension Projects {
         public struct Organization: Model {
           public var avatar: Avatar
 
-          public var dateCreated: DateTime
+          public var dateCreated: Date
 
           public var id: String
 
@@ -184,7 +199,7 @@ public extension Projects {
             }
           }
 
-          public init(avatar: Avatar, dateCreated: DateTime, id: String, isEarlyAdopter: Bool, name: String, require2FA: Bool, slug: String, status: Status) {
+          public init(avatar: Avatar, dateCreated: Date, id: String, isEarlyAdopter: Bool, name: String, require2FA: Bool, slug: String, status: Status) {
             self.avatar = avatar
             self.dateCreated = dateCreated
             self.id = id
@@ -222,7 +237,7 @@ public extension Projects {
           }
         }
 
-        public init(avatar: Avatar, color: String, dateCreated: DateTime, features: [String], firstEvent: String?, hasAccess: Bool, id: String, isBookmarked: Bool, isInternal: Bool, isMember: Bool, isPublic: Bool, name: String, organization: Organization, platform: String?, slug: String, status: Status) {
+        public init(avatar: Avatar, color: String, dateCreated: Date, features: [String], firstEvent: String?, hasAccess: Bool, id: String, isBookmarked: Bool, isInternal: Bool, isMember: Bool, isPublic: Bool, name: String, organization: Organization, platform: String?, slug: String, status: Status) {
           self.avatar = avatar
           self.color = color
           self.dateCreated = dateCreated
@@ -299,13 +314,6 @@ public extension Projects {
         }
       }
 
-      public var response: Any {
-        switch self {
-        case let .status200(response): return response
-        default: return ()
-        }
-      }
-
       public var statusCode: Int {
         switch self {
         case .status200: return 200
@@ -324,7 +332,7 @@ public extension Projects {
         switch statusCode {
         case 200: self = try .status200(decoder.decode([Status200].self, from: data))
         case 403: self = .status403
-        default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
+        default: throw ClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
         }
       }
 
