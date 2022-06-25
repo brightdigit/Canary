@@ -129,8 +129,19 @@ public extension Releases {
       }
     }
 
-    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
-      public typealias FailureType = Status400
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Status200, Status400?> {
+        switch self {
+        case let .status200(response):
+          return .success(response)
+        case let .status400(response):
+          return .defaultResponse(400, response)
+        default:
+          return .defaultResponse(statusCode, nil)
+        }
+      }
+
+      public typealias FailureType = Status400?
 
       public typealias APIType = CanaryAPI
       /** Returns a time series of release health session statistics for projects bound to an organization.
@@ -269,14 +280,6 @@ public extension Releases {
 //          fatalError("Response does not have success or failure response")
 //        }
 //      }
-
-      public var response: Any {
-        switch self {
-        case let .status200(response): return response
-        case let .status400(response): return response
-        default: return ()
-        }
-      }
 
       public var statusCode: Int {
         switch self {

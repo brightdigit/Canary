@@ -39,7 +39,17 @@ public extension Events {
       }
     }
 
-    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Void, Void> {
+        switch self {
+        case .status202:
+          return .success(())
+
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -62,12 +72,6 @@ public extension Events {
         switch self {
         case .status202: return ()
         default: return nil
-        }
-      }
-
-      public var response: Any {
-        switch self {
-        default: return ()
         }
       }
 

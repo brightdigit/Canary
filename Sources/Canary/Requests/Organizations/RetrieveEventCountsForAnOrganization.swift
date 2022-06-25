@@ -91,7 +91,17 @@ public extension Organizations {
       }
     }
 
-    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<[[Int]], Void> {
+        switch self {
+        case let .status200(response):
+          return .success(response)
+
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -117,13 +127,6 @@ public extension Organizations {
         switch self {
         case let .status200(response): return response
         default: return nil
-        }
-      }
-
-      public var response: Any {
-        switch self {
-        case let .status200(response): return response
-        default: return ()
         }
       }
 

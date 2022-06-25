@@ -51,7 +51,23 @@ public extension Releases {
       }
     }
 
-    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<[Status200], Void> {
+        switch self {
+        case .status401:
+          return .defaultResponse(401, ())
+
+        case .status403:
+          return .defaultResponse(403, ())
+
+        case .status404:
+          return .defaultResponse(404, ())
+
+        case let .status200(response):
+          return .success(response)
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -204,13 +220,6 @@ public extension Releases {
         switch self {
         case let .status200(response): return response
         default: return nil
-        }
-      }
-
-      public var response: Any {
-        switch self {
-        case let .status200(response): return response
-        default: return ()
         }
       }
 

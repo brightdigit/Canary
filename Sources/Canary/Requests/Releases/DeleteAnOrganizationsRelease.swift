@@ -43,7 +43,17 @@ public extension Releases {
       }
     }
 
-    public enum Response: DeprecatedResponse, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum Response: Prch.Response {
+      public var response: ClientResult<Void, Void> {
+        switch self {
+        case let .status204:
+          return .success(())
+
+        default:
+          return .defaultResponse(statusCode, ())
+        }
+      }
+
       public var failure: FailureType? {
         successful ? nil : ()
       }
@@ -59,12 +69,6 @@ public extension Releases {
       public var success: Void? {
         switch self {
         case .status204: return ()
-        }
-      }
-
-      public var response: Any {
-        switch self {
-        default: return ()
         }
       }
 
