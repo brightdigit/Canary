@@ -46,7 +46,7 @@ public extension Projects {
     public enum Response: Prch.Response {
       public var response: ClientResult<Void, Void> {
         switch self {
-        case let .status200:
+        case .status200:
           return .success(())
 
         default:

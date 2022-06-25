@@ -46,7 +46,7 @@ public extension SCIM {
     public enum Response: Prch.Response {
       public var response: ClientResult<Void, Void> {
         switch self {
-        case let .status204:
+        case .status204:
           return .success(())
 
         default:
