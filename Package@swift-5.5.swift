@@ -20,7 +20,7 @@ let package = Package(
   ],
   dependencies: [
     // Dependencies declare other packages that this package depends on.
-    .package(url: "https://github.com/brightdigit/Prch.git", from: "0.2.0-beta.1"),
+    .package(url: "https://github.com/brightdigit/Prch.git", from: "0.2.1"),
     .package(name: "PLCrashReporter", url: "https://github.com/microsoft/plcrashreporter.git", from: "1.10.0"),
     .package(name: "Sentry", url: "https://github.com/getsentry/sentry-cocoa.git", from: "7.5.0"),
     .package(url: "https://github.com/shibapm/Komondor", from: "1.1.2"), // dev
