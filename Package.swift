@@ -26,7 +26,8 @@ let package = Package(
     // Targets can depend on other targets in this package, and on products in packages this package depends on.
     .target(
       name: "Canary",
-      dependencies: ["Prch", 
+      dependencies: ["Prch",
+                     "SentryVanilla",
                      .product(
                        name: "Sentry",
                        package: "sentry-cocoa",
@@ -37,15 +38,15 @@ let package = Package(
       name: "CanaryTests",
       dependencies: ["Canary"]
     ),
-    // .target(
-    //   name: "SentryVanilla",
-    //   dependencies: [
-    //     .product(
-    //       name: "CrashReporter",
-    //       package: "PLCrashReporter",
-    //       condition: .when(platforms: [.macOS, .iOS, .tvOS])
-    //     )
-    //   ]
-    // )
+     .target(
+       name: "SentryVanilla",
+       dependencies: [
+//         .product(
+//           name: "CrashReporter",
+//           package: "PLCrashReporter",
+//           condition: .when(platforms: [.macOS, .iOS, .tvOS])
+//         )
+       ]
+     )
   ]
 )
