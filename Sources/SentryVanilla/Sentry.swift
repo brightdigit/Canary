@@ -25,9 +25,7 @@ public enum Sentry {
       // throw PlatformNotSupported
     #endif
 
-    #if (!os(Linux) || os(iOS) || os(tvOS)) && !os(watchOS)
-      options.add(integration: PLCrashReporterIntegration())
-    #endif
+
 
     hub = Hub(client: try SentryClient(options: options), options: options)
   }
