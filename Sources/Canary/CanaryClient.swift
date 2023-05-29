@@ -22,7 +22,7 @@ public struct CanaryClient {
     #endif
   }
 
-  public func configureScope(_ callback: @escaping (ConfigurableScope) -> Void) {
+  public func configureScope(_ callback: @escaping (any ConfigurableScope) -> Void) {
     #if canImport(Sentry) && !os(Linux)
       sentry.configureScope(callback)
     #else
@@ -32,7 +32,7 @@ public struct CanaryClient {
     #endif
   }
 
-  public func captureError(_ error: Error, configureScope: @escaping (ConfigurableScope) -> Void) {
+  public func captureError(_ error: Error, configureScope: @escaping (any ConfigurableScope) -> Void) {
     #if canImport(Sentry) && !os(Linux)
       sentry.capture(error: error, block: configureScope)
     #else
@@ -42,7 +42,7 @@ public struct CanaryClient {
     #endif
   }
 
-  public func captureEvent(_ event: CanaryEvent, configureScope: @escaping (ConfigurableScope) -> Void) {
+  public func captureEvent(_ event: any CanaryEvent, configureScope: @escaping (any ConfigurableScope) -> Void) {
     #if canImport(Sentry) && !os(Linux)
       sentry.capture(event: SentryCocoaEvent(event: event), block: configureScope)
     #else

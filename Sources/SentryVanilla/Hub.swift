@@ -44,19 +44,19 @@ public class Hub: ISentryClient {
 }
 
 public class Scope {
-  private var _eventProcessors = [EventProcessor]()
+  private var _eventProcessors = [any EventProcessor]()
 
   public var tags = [String: String]()
 
-  public var eventProcessors: [EventProcessor]! { _eventProcessors }
+  public var eventProcessors: [any EventProcessor]! { _eventProcessors }
 }
 
 public protocol EventProcessor {
-  func process(event: inout SentryEvent) -> SentryEvent?
+  func process(event: inout  SentryEvent) -> SentryEvent?
 }
 
 public extension Scope {
-  func add(eventProcessor: EventProcessor) {
+  func add(eventProcessor: any EventProcessor) {
     _eventProcessors.append(eventProcessor)
   }
 }

@@ -1,14 +1,14 @@
 public class SentryOptions {
   public var dsn: String?
-  private var _integrations = [SentryIntegration]()
+  private var _integrations = [any SentryIntegration]()
 
   public var beforeSend: ((inout SentryEvent) -> SentryEvent?)?
 
-  public var integrations: [SentryIntegration]! { _integrations }
+  public var integrations: [any SentryIntegration]! { _integrations }
 }
 
 public extension SentryOptions {
-  func add(integration: SentryIntegration) {
+  func add(integration: any SentryIntegration) {
     _integrations.append(integration)
   }
 }

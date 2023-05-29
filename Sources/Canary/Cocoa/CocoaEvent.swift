@@ -4,7 +4,7 @@
   typealias SentryCocoaEvent = Sentry.Event
 
   extension SentryCocoaEvent {
-    convenience init(event: CanaryEvent) {
+    convenience init(event: any CanaryEvent) {
       self.init()
       self.level = .init(level: event.level)
       self.logger = event.logger

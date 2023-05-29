@@ -1,7 +1,17 @@
-// swift-tools-version:5.8
+// swift-tools-version: 5.8
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
+
+let swiftSettings: [SwiftSetting] = [
+   .enableUpcomingFeature("BareSlashRegexLiterals"),
+   .enableUpcomingFeature("ConciseMagicFile"),
+   .enableUpcomingFeature("ExistentialAny"),
+   .enableUpcomingFeature("ForwardTrailingClosures"),
+   .enableUpcomingFeature("ImplicitOpenExistentials"),
+   .enableUpcomingFeature("StrictConcurrency"),
+   .unsafeFlags(["-warn-concurrency", "-enable-actor-data-race-checks"]),
+]
 
 let package = Package(
   name: "Canary",
@@ -32,7 +42,8 @@ let package = Package(
                        name: "Sentry",
                        package: "sentry-cocoa",
                        condition: .when(platforms: [.macOS, .iOS, .watchOS, .tvOS])
-                     )]
+                     )],
+                      swiftSettings: swiftSettings
     ),
     .testTarget(
       name: "CanaryTests",
@@ -46,7 +57,8 @@ let package = Package(
 //           package: "PLCrashReporter",
 //           condition: .when(platforms: [.macOS, .iOS, .tvOS])
 //         )
-       ]
+       ],
+        swiftSettings: swiftSettings
      )
   ]
 )
